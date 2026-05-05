@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Banco principal - PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: festflow_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: festflow
+      POSTGRES_PASSWORD: festflow123
+      POSTGRES_DB: festflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Banco NoSQL - MongoDB
+  mongodb:
+    image: mongo:6
+    container_name: festflow_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: festflow
+      MONGO_INITDB_ROOT_PASSWORD: festflow123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # Banco legado - MySQL
+  mysql:
+    image: mysql:8
+    container_name: festflow_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: festflow123
+      MYSQL_DATABASE: festflow_legacy
+      MYSQL_USER: festflow
+      MYSQL_PASSWORD: festflow123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  postgres_data:
+  mongo_data:
+  mysql_data:
