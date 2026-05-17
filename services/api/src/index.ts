@@ -1,5 +1,6 @@
 import express from 'express';
 import eventsRouter from './routes/events';
+import usersRouter from './routes/users';
 
 const app = express();
 const PORT = 3000;
@@ -21,6 +22,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/events', eventsRouter);
+app.use('/users', usersRouter);
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
