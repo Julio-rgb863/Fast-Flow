@@ -11,3 +11,4 @@ router.put('/:id', eventController.update);
 router.delete('/:id', eventController.delete);
 
 export default router;
+
