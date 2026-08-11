@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import eventsRouter from './routes/events';
 import usersRouter from './routes/users';
 import ordersRouter from './routes/orders';
@@ -6,17 +7,22 @@ import ordersRouter from './routes/orders';
 const app = express();
 const PORT = 3000;
 
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'FestFlow API rodando!',
     version: '1.0.0'
   });
 });
 
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'ok',
     timestamp: new Date().toISOString()
   });
