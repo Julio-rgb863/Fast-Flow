@@ -1,6 +1,7 @@
- import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 import api from '../services/api';
 
 interface Order {
@@ -45,58 +46,106 @@ export default function MyOrders() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f3f4f6' }}>
+    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff' }}>
       {/* Navbar */}
-      <nav style={{ background: '#1e40af', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ color: '#fff', margin: 0, cursor: 'pointer' }} onClick={() => navigate('/')}>🎉 FastFlow</h1>
+      <nav style={{
+        background: 'rgba(12,12,20,0.95)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid #2d1b69',
+        padding: '1rem 2rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+      }}>
+        <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+          <Logo size={32} />
+          <span style={{ fontSize: '1.2rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #c084fc, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            FastFlow
+          </span>
+        </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: '#fff' }}>Olá, {user?.name}!</span>
-          <button onClick={() => navigate('/')} style={{ padding: '0.5rem 1rem', background: '#fff', color: '#1e40af', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+          <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+          <button onClick={() => navigate('/')} style={{ padding: '0.5rem 1rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
             Início
           </button>
-          <button onClick={logout} style={{ padding: '0.5rem 1rem', background: 'transparent', color: '#fff', border: '1px solid #fff', borderRadius: '8px', cursor: 'pointer' }}>
+          <button onClick={logout} style={{ padding: '0.5rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
             Sair
           </button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '0 1rem' }}>
-        <h2 style={{ color: '#374151', marginBottom: '1.5rem' }}>Meus Pedidos</h2>
+      <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '0 1.5rem' }}>
+        <h2 className="animate-fadeInUp" style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+          🎟 Meus Pedidos
+        </h2>
+        <p className="animate-fadeInUp delay-100" style={{ color: '#6b7280', marginBottom: '2rem' }}>
+          Gerencie seus ingressos
+        </p>
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: '#6b7280' }}>Carregando pedidos...</p>
+          <div style={{ textAlign: 'center', padding: '4rem' }}>
+            <div className="animate-float" style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚡</div>
+            <p style={{ color: '#a855f7' }}>Carregando pedidos...</p>
+          </div>
         ) : orders.length === 0 ? (
-          <div style={{ textAlign: 'center', background: '#fff', padding: '3rem', borderRadius: '12px' }}>
-            <p style={{ color: '#6b7280', fontSize: '1.1rem' }}>Você ainda não tem pedidos.</p>
-            <button onClick={() => navigate('/')} style={{ marginTop: '1rem', padding: '0.75rem 1.5rem', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-              Ver Eventos
+          <div className="animate-fadeInUp glass" style={{ borderRadius: '20px', padding: '4rem', textAlign: 'center' }}>
+            <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎭</p>
+            <p style={{ color: '#9ca3af', fontSize: '1.1rem', marginBottom: '1.5rem' }}>Você ainda não tem pedidos.</p>
+            <button onClick={() => navigate('/')} className="btn-purple" style={{ padding: '0.75rem 2rem', color: '#fff', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
+              Ver Eventos ⚡
             </button>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {orders.map(order => (
-              <div key={order.id} style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                <div style={{ background: order.status === 'cancelled' ? '#6b7280' : '#1e40af', padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 style={{ color: '#fff', margin: 0 }}>{order.event.name}</h4>
-                  <span style={{ background: order.status === 'cancelled' ? '#374151' : '#059669', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.8rem' }}>
-                    {order.status === 'cancelled' ? 'Cancelado' : 'Confirmado'}
+            {orders.map((order, i) => (
+              <div key={order.id} className={`animate-fadeInUp delay-${(i % 5) * 100}`} style={{
+                background: 'linear-gradient(135deg, #12121a, #1a1a2e)',
+                border: `1px solid ${order.status === 'cancelled' ? 'rgba(220,38,38,0.2)' : 'rgba(124,58,237,0.2)'}`,
+                borderRadius: '16px',
+                overflow: 'hidden',
+                boxShadow: order.status === 'cancelled' ? 'none' : '0 0 20px rgba(124,58,237,0.05)',
+              }}>
+                <div style={{
+                  background: order.status === 'cancelled' ? 'rgba(55,65,81,0.5)' : 'linear-gradient(135deg, #4c1d95, #7c3aed)',
+                  padding: '1rem 1.5rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                  <h4 style={{ color: '#fff', margin: 0, fontWeight: 'bold' }}>{order.event.name}</h4>
+                  <span style={{
+                    background: order.status === 'cancelled' ? 'rgba(220,38,38,0.2)' : 'rgba(52,211,153,0.2)',
+                    color: order.status === 'cancelled' ? '#f87171' : '#34d399',
+                    border: `1px solid ${order.status === 'cancelled' ? 'rgba(220,38,38,0.3)' : 'rgba(52,211,153,0.3)'}`,
+                    padding: '0.25rem 0.875rem',
+                    borderRadius: '999px',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
+                  }}>
+                    {order.status === 'cancelled' ? '❌ Cancelado' : '✅ Confirmado'}
                   </span>
                 </div>
+
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-                    <p style={{ color: '#6b7280', margin: 0 }}>📅 {new Date(order.event.date).toLocaleDateString('pt-BR')}</p>
-                    <p style={{ color: '#6b7280', margin: 0 }}>📍 {order.event.location}</p>
-                    <p style={{ color: '#6b7280', margin: 0 }}>🎟 {order.quantity} ingresso(s)</p>
-                    <p style={{ color: '#374151', margin: 0, fontWeight: 'bold' }}>💰 R$ {order.total.toFixed(2)}</p>
+                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.9rem' }}>📅 {new Date(order.event.date).toLocaleDateString('pt-BR')}</p>
+                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.9rem' }}>📍 {order.event.location}</p>
+                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.9rem' }}>🎟 {order.quantity} ingresso(s)</p>
+                    <p style={{ color: '#a855f7', margin: 0, fontWeight: 'bold', fontSize: '0.9rem' }}>💰 R$ {order.total.toFixed(2)}</p>
                   </div>
-                  <p style={{ color: '#9ca3af', fontSize: '0.8rem', margin: 0 }}>
+                  <p style={{ color: '#4b5563', fontSize: '0.8rem', marginBottom: order.status !== 'cancelled' ? '1rem' : '0' }}>
                     Pedido em {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                   </p>
 
                   {order.status !== 'cancelled' && (
                     <button
                       onClick={() => handleCancel(order.id)}
-                      style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: 'transparent', color: '#dc2626', border: '1px solid #dc2626', borderRadius: '8px', cursor: 'pointer' }}
+                      style={{ padding: '0.5rem 1.25rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem', transition: 'all 0.3s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.2)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; }}
                     >
                       Cancelar Pedido
                     </button>
@@ -108,5 +157,4 @@ export default function MyOrders() {
         )}
       </div>
     </div>
-  );
-}
+  );}

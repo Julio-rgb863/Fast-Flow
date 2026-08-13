@@ -1,6 +1,7 @@
-  import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 import api from '../services/api';
 
 export default function Login() {
@@ -27,51 +28,93 @@ export default function Login() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f3f4f6' }}>
-      <div style={{ background: '#fff', padding: '2rem', borderRadius: '12px', width: '100%', maxWidth: '400px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#1e40af' }}>🎉 FastFlow</h1>
-        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#374151' }}>Entrar</h2>
+    <div style={{
+      minHeight: '100vh',
+      background: 'radial-gradient(ellipse at top, #2d0a6e 0%, #1a0533 40%, #0a0014 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Blobs animados */}
+      <div className="animate-blob" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #7c3aed 0%, #4c1d95 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.6 }} />
+      <div className="animate-blob delay-300" style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #a855f7 0%, #6d28d9 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.5 }} />
+      <div className="animate-blob delay-500" style={{ position: 'absolute', bottom: '30%', right: '5%', width: '250px', height: '250px', background: 'radial-gradient(circle, #c084fc 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.4 }} />
 
-        {error && <p style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>{error}</p>}
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: '#374151' }}>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
-              placeholder="seu@email.com"
-              required
-            />
+      <div className="animate-fadeInUp" style={{ width: '100%', maxWidth: '420px', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
+        <div className="glass" style={{
+          borderRadius: '24px',
+          padding: '2.5rem 2rem',
+          boxShadow: '0 8px 60px rgba(124,58,237,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+        }}>
+          {/* Logo */}
+          <div className="animate-fadeInUp delay-100" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div className="animate-float" style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+              <Logo size={52} />
+            </div>
+            <span className="text-shimmer" style={{ fontSize: '1.1rem', fontWeight: '700', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              FastFlow
+            </span>
+            <p style={{ color: '#c084fc', marginTop: '0.5rem', fontSize: '1.2rem', fontWeight: '300' }}>
+              Bem-vindo de volta! ⚡
+            </p>
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: '#374151' }}>Senha</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
-              placeholder="••••••"
-              required
-            />
-          </div>
+          {error && (
+            <div className="animate-fadeIn" style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '10px', padding: '0.75rem', marginBottom: '1.5rem', color: '#f87171', textAlign: 'center', fontSize: '0.875rem' }}>
+              {error}
+            </div>
+          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ width: '100%', padding: '0.75rem', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer' }}
-          >
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <div className="animate-fadeInUp delay-200" style={{ marginBottom: '1.25rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
+                required
+                style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
+                onFocus={e => e.target.style.borderColor = '#a855f7'}
+                onBlur={e => e.target.style.borderColor = 'rgba(168,85,247,0.3)'}
+              />
+            </div>
 
-        <p style={{ textAlign: 'center', marginTop: '1rem', color: '#6b7280' }}>
-          Não tem conta? <Link to="/register" style={{ color: '#1e40af' }}>Cadastre-se</Link>
-        </p>
+            <div className="animate-fadeInUp delay-300" style={{ marginBottom: '2rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Senha</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
+                onFocus={e => e.target.style.borderColor = '#a855f7'}
+                onBlur={e => e.target.style.borderColor = 'rgba(168,85,247,0.3)'}
+              />
+            </div>
+
+            <div className="animate-fadeInUp delay-400">
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-purple animate-pulse-glow"
+                style={{ width: '100%', padding: '0.875rem', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.05em' }}
+              >
+                {loading ? '⚡ Entrando...' : '⚡ Entrar'}
+              </button>
+            </div>
+          </form>
+
+          <p className="animate-fadeInUp delay-500" style={{ textAlign: 'center', marginTop: '1.5rem', color: '#9ca3af', fontSize: '0.9rem' }}>
+            Não tem conta?{' '}
+            <Link to="/register" style={{ color: '#a855f7', textDecoration: 'none', fontWeight: 'bold' }}>
+              Cadastre-se
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
-  );
-}
+  );}
