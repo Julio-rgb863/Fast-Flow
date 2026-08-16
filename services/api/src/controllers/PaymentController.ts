@@ -1,4 +1,4 @@
- import { Response } from 'express';
+import { Response } from 'express';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from '../middleware/auth';
@@ -46,6 +46,8 @@ export class PaymentController {
         expiresAt: result.date_of_expiration,
       });
     } catch (error: any) {
+      console.log('Erro MP detalhado:', JSON.stringify(error?.cause || error?.message || error));
+      console.log('Erro completo:', error);
       return res.status(500).json({ message: 'Erro ao criar pagamento', error: error.message });
     }
   };
@@ -62,7 +64,6 @@ export class PaymentController {
       const result = await payment.get({ id: paymentIdValue });
 
       if (result.status === 'approved') {
-        // Atualiza o pedido para pago
         const orderId = result.external_reference;
         if (orderId) {
           await prisma.order.update({
@@ -74,7 +75,8 @@ export class PaymentController {
 
       return res.json({ status: result.status });
     } catch (error: any) {
-      return res.status(500).json({ message: 'Erro ao verificar pagamento' });
+      console.log('Erro MP status:', JSON.stringify(error?.cause || error?.message || error));
+      return res.status(500).json({ message: 'Erro ao verificar pagamento', error: error.message });
     }
   };
 }
