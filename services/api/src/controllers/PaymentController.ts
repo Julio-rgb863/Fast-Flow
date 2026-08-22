@@ -5,17 +5,19 @@ import { AuthRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
 
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || '',
-});
-
-const payment = new Payment(client);
-
 export class PaymentController {
   createPixPayment = async (req: AuthRequest, res: Response) => {
     try {
       const { orderId } = req.body;
       const userId = req.userId as string;
+
+      // Inicializa o cliente aqui para garantir que o .env já foi carregado
+      const client = new MercadoPagoConfig({
+        accessToken: process.env.MP_ACCESS_TOKEN || '',
+      });
+      const payment = new Payment(client);
+
+      console.log('Token usado:', process.env.MP_ACCESS_TOKEN?.substring(0, 20));
 
       const order = await prisma.order.findUnique({
         where: { id: orderId },
@@ -54,6 +56,11 @@ export class PaymentController {
 
   checkPaymentStatus = async (req: AuthRequest, res: Response) => {
     try {
+      const client = new MercadoPagoConfig({
+        accessToken: process.env.MP_ACCESS_TOKEN || '',
+      });
+      const payment = new Payment(client);
+
       const { paymentId } = req.params;
       const paymentIdValue = Array.isArray(paymentId) ? paymentId[0] : paymentId;
 

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -64,6 +65,7 @@ app.use('/users', authLimiter, usersRouter);
 app.use('/events', eventsRouter);
 app.use('/orders', ordersRouter);
 app.use('/payments', paymentsRouter);
+
 // Handler de erros global
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   logger.error(`Erro: ${err.message} — ${req.method} ${req.path}`);
