@@ -11,7 +11,6 @@ export class PaymentController {
       const { orderId } = req.body;
       const userId = req.userId as string;
 
-      // Inicializa o cliente aqui para garantir que o .env já foi carregado
       const client = new MercadoPagoConfig({
         accessToken: process.env.MP_ACCESS_TOKEN || '',
       });
@@ -34,7 +33,7 @@ export class PaymentController {
           description: `FastFlow - ${order.event.name} (${order.quantity} ingresso(s))`,
           payment_method_id: 'pix',
           payer: {
-            email: order.user.email,
+            email: 'TESTUSER2306577816090712921@testuser.com',
             first_name: order.user.name,
           },
         },
