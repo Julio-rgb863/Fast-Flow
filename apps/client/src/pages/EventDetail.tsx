@@ -23,7 +23,6 @@ export default function EventDetail() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState(false);
-  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -41,9 +40,15 @@ export default function EventDetail() {
     setBuying(true);
     setError('');
     try {
-      await api.post('/orders', { eventId: id, quantity });
-      setSuccess(`✅ Compra realizada! ${quantity} ingresso(s) adquirido(s).`);
-      setEvent(prev => prev ? { ...prev, soldTickets: prev.soldTickets + quantity } : prev);
+      const { data } = await api.post('/orders', { eventId: id, quantity });
+      navigate('/payment', {
+        state: {
+          orderId: data.id,
+          total: data.total,
+          eventName: event?.name,
+          quantity: quantity,
+        }
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao realizar compra');
     } finally {
@@ -70,7 +75,6 @@ export default function EventDetail() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff' }}>
-      {/* Navbar */}
       <nav style={{
         background: 'rgba(12,12,20,0.95)',
         backdropFilter: 'blur(12px)',
@@ -94,7 +98,6 @@ export default function EventDetail() {
         </button>
       </nav>
 
-      {/* Hero do evento */}
       <div style={{
         background: 'linear-gradient(135deg, #1a0533 0%, #2d0a6e 50%, #1a0533 100%)',
         padding: '3rem 2rem',
@@ -114,7 +117,6 @@ export default function EventDetail() {
           <div style={{ padding: '2rem' }}>
             <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: '2rem', fontSize: '1rem' }}>{event.description}</p>
 
-            {/* Info grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
               {[
                 { icon: '📅', label: 'Data', value: new Date(event.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) },
@@ -129,19 +131,13 @@ export default function EventDetail() {
               ))}
             </div>
 
-            {success && (
-              <div className="animate-fadeIn" style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.3)', borderRadius: '12px', padding: '1rem', marginBottom: '1.5rem', color: '#34d399', textAlign: 'center' }}>
-                {success}
-              </div>
-            )}
-
             {error && (
               <div className="animate-fadeIn" style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '12px', padding: '1rem', marginBottom: '1.5rem', color: '#f87171', textAlign: 'center' }}>
                 {error}
               </div>
             )}
 
-            {disponiveis > 0 && !success && (
+            {disponiveis > 0 && (
               <div className="animate-fadeInUp delay-400" style={{ borderTop: '1px solid rgba(124,58,237,0.2)', paddingTop: '1.5rem' }}>
                 <h3 style={{ color: '#c084fc', marginBottom: '1rem', fontSize: '1.1rem' }}>⚡ Comprar Ingressos</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -178,4 +174,5 @@ export default function EventDetail() {
         </div>
       </div>
     </div>
-  );}
+  );
+}

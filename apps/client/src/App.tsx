@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import EventDetail from './pages/EventDetail';
 import MyOrders from './pages/MyOrders';
+import Payment from './pages/Payment';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="/payment" element={<Payment />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
