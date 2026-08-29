@@ -9,6 +9,7 @@ import eventsRouter from './routes/events';
 import usersRouter from './routes/users';
 import ordersRouter from './routes/orders';
 import paymentsRouter from './routes/payments';
+import stripeRouter from './routes/stripe';
 
 const app = express();
 const PORT = 3000;
@@ -65,6 +66,7 @@ app.use('/users', authLimiter, usersRouter);
 app.use('/events', eventsRouter);
 app.use('/orders', ordersRouter);
 app.use('/payments', paymentsRouter);
+app.use('/stripe', stripeRouter);
 
 // Handler de erros global
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
