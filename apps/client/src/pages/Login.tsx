@@ -37,7 +37,15 @@ export default function Login() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Blobs animados */}
+      <style>{`
+        @media (max-width: 480px) {
+          .glass {
+            padding: 1.5rem 1.25rem !important;
+            border-radius: 16px !important;
+          }
+        }
+      `}</style>
+
       <div className="animate-blob" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #7c3aed 0%, #4c1d95 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.6 }} />
       <div className="animate-blob delay-300" style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #a855f7 0%, #6d28d9 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.5 }} />
       <div className="animate-blob delay-500" style={{ position: 'absolute', bottom: '30%', right: '5%', width: '250px', height: '250px', background: 'radial-gradient(circle, #c084fc 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.4 }} />
@@ -48,7 +56,6 @@ export default function Login() {
           padding: '2.5rem 2rem',
           boxShadow: '0 8px 60px rgba(124,58,237,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
         }}>
-          {/* Logo */}
           <div className="animate-fadeInUp delay-100" style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <div className="animate-float" style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
               <Logo size={52} />
@@ -117,4 +124,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  );}
+  );
+}
