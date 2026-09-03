@@ -12,6 +12,7 @@ model User {
   name      String
   email     String   @unique
   password  String
+  role      String   @default("user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
