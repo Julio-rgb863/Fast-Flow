@@ -20,4 +20,6 @@ export const isAdmin = async (req: AuthRequest, res: Response, next: NextFunctio
   } catch (error) {
     return res.status(500).json({ message: 'Erro ao verificar permissão' });
   }
-}; 
+};
+
+export const adminMiddleware = isAdmin;

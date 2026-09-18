@@ -32,7 +32,7 @@ export class UserController {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await prisma.user.create({ data: { name, email, password: hashedPassword } });
 
-      return res.status(201).json({ id: user.id, name: user.name, email: user.email });
+      return res.status(201).json({ id: user.id, name: user.name, email: user.email, role: user.role });
     } catch (error) {
       return res.status(500).json({ message: 'Erro ao criar usuário' });
     }
@@ -50,8 +50,8 @@ export class UserController {
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) return res.status(401).json({ message: 'Email ou senha inválidos' });
 
-      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+      const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (error) {
       return res.status(500).json({ message: 'Erro ao fazer login' });
     }
@@ -63,7 +63,7 @@ export class UserController {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {
-          id: true, name: true, email: true, createdAt: true,
+          id: true, name: true, email: true, role: true, createdAt: true,
           orders: { include: { event: true }, orderBy: { createdAt: 'desc' } },
         },
       });

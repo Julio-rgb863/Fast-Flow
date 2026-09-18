@@ -10,6 +10,7 @@ import usersRouter from './routes/users';
 import ordersRouter from './routes/orders';
 import paymentsRouter from './routes/payments';
 import stripeRouter from './routes/stripe';
+import adminRouter from './routes/admin';
 
 const app = express();
 const PORT = 3000;
@@ -67,6 +68,7 @@ app.use('/events', eventsRouter);
 app.use('/orders', ordersRouter);
 app.use('/payments', paymentsRouter);
 app.use('/stripe', stripeRouter);
+app.use('/admin', adminRouter);
 
 // Handler de erros global
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

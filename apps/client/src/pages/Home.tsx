@@ -19,7 +19,7 @@ export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,6 +56,23 @@ export default function Home() {
           {isAuthenticated ? (
             <>
               <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+              {(isAdmin || user?.role === 'admin') && (
+                <button
+                  onClick={() => navigate('/admin')}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: '#1e103c',
+                    color: '#c084fc',
+                    border: '1px solid #7c3aed',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  ⚙️ Admin
+                </button>
+              )}
               <button onClick={() => navigate('/my-orders')} style={{ padding: '0.5rem 1.25rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.875rem' }}>
                 Meus Pedidos
               </button>
@@ -101,6 +118,22 @@ export default function Home() {
           {isAuthenticated ? (
             <>
               <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+              {(isAdmin || user?.role === 'admin') && (
+                <button
+                  onClick={() => { navigate('/admin'); setMenuOpen(false); }}
+                  style={{
+                    padding: '0.75rem',
+                    background: '#1e103c',
+                    color: '#c084fc',
+                    border: '1px solid #7c3aed',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  ⚙️ Painel Admin
+                </button>
+              )}
               <button onClick={() => { navigate('/my-orders'); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
                 Meus Pedidos
               </button>

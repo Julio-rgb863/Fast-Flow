@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import Logo from '../components/Logo';
+import { useNavigate } from 'react-router-dom';
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('orderId');
 
   useEffect(() => {
     setTimeout(() => {

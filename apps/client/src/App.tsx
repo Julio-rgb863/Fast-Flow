@@ -8,6 +8,7 @@ import MyOrders from './pages/MyOrders';
 import Payment from './pages/Payment';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import Admin from './pages/Admin';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -1,5 +1,4 @@
  import { useNavigate } from 'react-router-dom';
-import Logo from '../components/Logo';
 
 export default function PaymentCancel() {
   const navigate = useNavigate();
