@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { AuthRequest } from '../middleware/auth';
@@ -95,6 +95,43 @@ export class OrderController {
       if (error.message === 'SEM_PERMISSAO') return res.status(403).json({ message: 'Sem permissão para cancelar este pedido' });
       if (error.message === 'JA_CANCELADO') return res.status(400).json({ message: 'Pedido já foi cancelado' });
       return res.status(500).json({ message: 'Erro ao cancelar pedido' });
+    }
+  }
+
+  async validateTicket(req: Request, res: Response) {
+    try {
+      const id = req.params.id as string;
+      const order = await prisma.order.findUnique({
+        where: { id },
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+          event: { select: { id: true, name: true, date: true, location: true } },
+        },
+      });
+
+      if (!order) {
+        return res.status(404).json({ valid: false, message: 'Ingresso não encontrado' });
+      }
+
+      if (order.status === 'cancelled') {
+        return res.status(400).json({ valid: false, message: 'Ingresso cancelado', status: order.status });
+      }
+
+      return res.json({
+        valid: true,
+        message: 'Ingresso válido',
+        ticket: {
+          orderId: order.id,
+          status: order.status,
+          quantity: order.quantity,
+          customer: order.user.name,
+          event: order.event.name,
+          date: order.event.date,
+          location: order.event.location,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({ valid: false, message: 'Erro ao validar ingresso' });
     }
   }
 }

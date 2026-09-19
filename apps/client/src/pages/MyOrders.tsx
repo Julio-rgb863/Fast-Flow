@@ -3,24 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
 import api from '../services/api';
+import TicketModal, { type TicketOrder } from '../components/TicketModal';
 
-interface Order {
-  id: string;
-  quantity: number;
-  total: number;
-  status: string;
-  createdAt: string;
-  event: {
-    id: string;
-    name: string;
-    date: string;
-    location: string;
-    price: number;
-  };
-}
+interface Order extends TicketOrder {}
 
 export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<TicketOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
@@ -183,12 +172,40 @@ export default function MyOrders() {
                   </p>
 
                   {order.status !== 'cancelled' && (
-                    <button
-                      onClick={() => handleCancel(order.id)}
-                      style={{ padding: '0.5rem 1.25rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}
-                    >
-                      Cancelar Pedido
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        style={{
+                          padding: '0.55rem 1.25rem',
+                          background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          fontSize: '0.875rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                        }}
+                      >
+                        🎟️ Ver Ingresso (QR Code)
+                      </button>
+                      <button
+                        onClick={() => handleCancel(order.id)}
+                        style={{
+                          padding: '0.55rem 1.25rem',
+                          background: 'rgba(220,38,38,0.1)',
+                          color: '#f87171',
+                          border: '1px solid rgba(220,38,38,0.3)',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                        }}
+                      >
+                        Cancelar Pedido
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -196,6 +213,15 @@ export default function MyOrders() {
           </div>
         )}
       </div>
+
+      {/* Modal do Ingresso Digital */}
+      {selectedOrder && (
+        <TicketModal
+          order={selectedOrder}
+          userName={user?.name}
+          onClose={() => setSelectedOrder(null)}
+        />
+      )}
     </div>
   );
 }
