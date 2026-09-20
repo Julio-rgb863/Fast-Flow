@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -13,8 +14,9 @@ import Admin from './pages/Admin';
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
+      <LanguageProvider>
+        <AuthProvider>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -26,6 +28,7 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </AuthProvider>
-    </BrowserRouter>
+    </LanguageProvider>
+  </BrowserRouter>
   );
 }

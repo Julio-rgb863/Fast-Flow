@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import Logo from '../components/Logo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import api from '../services/api';
 
 interface Event {
@@ -20,6 +22,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,9 +56,11 @@ export default function Home() {
 
         {/* Menu Desktop */}
         <div className="desktop-menu" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <LanguageSwitcher />
+
           {isAuthenticated ? (
             <>
-              <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+              <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>{t.nav.hello}, {user?.name}!</span>
               {(isAdmin || user?.role === 'admin') && (
                 <button
                   onClick={() => navigate('/admin')}
@@ -70,36 +75,38 @@ export default function Home() {
                     fontSize: '0.875rem',
                   }}
                 >
-                  ⚙️ Admin
+                  ⚙️ {t.nav.admin}
                 </button>
               )}
               <button onClick={() => navigate('/my-orders')} style={{ padding: '0.5rem 1.25rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.875rem' }}>
-                Meus Pedidos
+                {t.nav.myOrders}
               </button>
               <button onClick={logout} style={{ padding: '0.5rem 1.25rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-                Sair
+                {t.nav.logout}
               </button>
             </>
           ) : (
             <>
               <button onClick={() => navigate('/login')} style={{ padding: '0.5rem 1.25rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.875rem' }}>
-                Entrar
+                {t.nav.login}
               </button>
               <button onClick={() => navigate('/register')} style={{ padding: '0.5rem 1.25rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-                Cadastrar
+                {t.nav.register}
               </button>
             </>
           )}
         </div>
 
         {/* Menu Mobile Hamburguer */}
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setMenuOpen(!menuOpen)}
-          style={{ display: 'none', background: 'transparent', border: 'none', color: '#a855f7', fontSize: '1.5rem', cursor: 'pointer' }}
-        >
-          {menuOpen ? '✕' : '☰'}
-        </button>
+        <div style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }} className="mobile-menu-btn">
+          <LanguageSwitcher />
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{ background: 'transparent', border: 'none', color: '#a855f7', fontSize: '1.5rem', cursor: 'pointer' }}
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </nav>
 
       {/* Menu Mobile Dropdown */}
@@ -117,7 +124,7 @@ export default function Home() {
         }}>
           {isAuthenticated ? (
             <>
-              <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+              <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>{t.nav.hello}, {user?.name}!</span>
               {(isAdmin || user?.role === 'admin') && (
                 <button
                   onClick={() => { navigate('/admin'); setMenuOpen(false); }}
@@ -131,23 +138,23 @@ export default function Home() {
                     fontWeight: 'bold',
                   }}
                 >
-                  ⚙️ Painel Admin
+                  ⚙️ {t.nav.adminPanel}
                 </button>
               )}
               <button onClick={() => { navigate('/my-orders'); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-                Meus Pedidos
+                {t.nav.myOrders}
               </button>
               <button onClick={() => { logout(); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer' }}>
-                Sair
+                {t.nav.logout}
               </button>
             </>
           ) : (
             <>
               <button onClick={() => { navigate('/login'); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-                Entrar
+                {t.nav.login}
               </button>
               <button onClick={() => { navigate('/register'); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer' }}>
-                Cadastrar
+                {t.nav.register}
               </button>
             </>
           )}
@@ -167,20 +174,17 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '999px', padding: '0.4rem 1rem', marginBottom: '1.5rem' }}>
-            <span style={{ color: '#a855f7', fontSize: '0.8rem' }}>⚡ Plataforma de eventos</span>
+            <span style={{ color: '#a855f7', fontSize: '0.8rem' }}>{t.home.heroBadge}</span>
           </div>
           <h1 style={{ fontSize: 'clamp(1.75rem, 5vw, 3.5rem)', fontWeight: 'bold', marginBottom: '1rem', lineHeight: 1.1 }}>
-            Os melhores eventos{' '}
-            <span style={{ background: 'linear-gradient(135deg, #c084fc, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              estão aqui
-            </span>
+            {t.home.heroTitle}
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: 'clamp(0.9rem, 2.5vw, 1.2rem)', marginBottom: '2rem' }}>
-            Compre seus ingressos de forma rápida e segura
+          <p style={{ color: '#9ca3af', fontSize: 'clamp(0.9rem, 2.5vw, 1.2rem)', marginBottom: '2rem', maxWidth: '650px', margin: '0 auto 2rem auto' }}>
+            {t.home.heroSubtitle}
           </p>
           {!isAuthenticated && (
             <button onClick={() => navigate('/register')} style={{ padding: '0.875rem 2rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 0 30px rgba(124,58,237,0.4)' }}>
-              Começar agora ⚡
+              {t.home.exploreEvents}
             </button>
           )}
         </div>
@@ -189,16 +193,16 @@ export default function Home() {
       {/* Eventos */}
       <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
         <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', fontWeight: 'bold', marginBottom: '1.5rem', color: '#fff' }}>
-          🎭 Eventos Disponíveis
+          🎭 {t.home.upcomingEvents}
         </h2>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: '#a855f7' }}>
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⚡</div>
-            <p>Carregando eventos...</p>
+            <p>{t.home.loadingEvents}</p>
           </div>
         ) : events.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#6b7280' }}>Nenhum evento disponível no momento.</p>
+          <p style={{ textAlign: 'center', color: '#6b7280' }}>{t.home.noEvents}</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
             {events.map(event => (
@@ -228,15 +232,19 @@ export default function Home() {
                   <h3 style={{ color: '#fff', fontWeight: 'bold', fontSize: '1rem' }}>{event.name}</h3>
                 </div>
                 <div style={{ padding: '1rem' }}>
-                  <p style={{ color: '#9ca3af', marginBottom: '0.5rem', fontSize: '0.85rem' }}>📅 {new Date(event.date).toLocaleDateString('pt-BR')}</p>
+                  <p style={{ color: '#9ca3af', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                    📅 {new Date(event.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
+                  </p>
                   <p style={{ color: '#9ca3af', marginBottom: '0.5rem', fontSize: '0.85rem' }}>📍 {event.location}</p>
-                  <p style={{ color: '#9ca3af', marginBottom: '1rem', fontSize: '0.85rem' }}>🎟 {event.totalTickets - event.soldTickets} ingressos disponíveis</p>
+                  <p style={{ color: '#9ca3af', marginBottom: '1rem', fontSize: '0.85rem' }}>
+                    🎟 {event.totalTickets - event.soldTickets} {t.home.ticketsLeft}
+                  </p>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontWeight: 'bold', color: '#a855f7', fontSize: '1.1rem' }}>
-                      R$ {event.price.toFixed(2)}
+                      {language === 'en' ? `$ ${event.price.toFixed(2)}` : `R$ ${event.price.toFixed(2)}`}
                     </span>
                     <button style={{ padding: '0.5rem 1rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' }}>
-                      Ver mais ⚡
+                      {t.home.viewDetails} ⚡
                     </button>
                   </div>
                 </div>
@@ -252,7 +260,9 @@ export default function Home() {
           <Logo size={20} />
           <span style={{ color: '#a855f7', fontWeight: 'bold', fontSize: '0.9rem' }}>FastFlow</span>
         </div>
-        <p style={{ color: '#6b7280', fontSize: '0.8rem' }}>© 2026 FastFlow. Todos os direitos reservados.</p>
+        <p style={{ color: '#6b7280', fontSize: '0.8rem' }}>
+          © 2026 FastFlow. {language === 'en' ? 'All rights reserved.' : 'Todos os direitos reservados.'}
+        </p>
       </footer>
 
       <style>{`

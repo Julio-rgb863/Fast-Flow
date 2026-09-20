@@ -1,5 +1,6 @@
 import { QRCodeSVG } from 'qrcode.react';
 import Logo from './Logo';
+import { useLanguage } from '../context/LanguageContext';
 
 export interface TicketOrder {
   id: string;
@@ -23,10 +24,12 @@ interface TicketModalProps {
 }
 
 export default function TicketModal({ order, userName, onClose }: TicketModalProps) {
+  const { t, language } = useLanguage();
+
   const qrData = JSON.stringify({
     ticketId: order.id,
     event: order.event.name,
-    customer: userName || 'Cliente FastFlow',
+    customer: userName || (language === 'en' ? 'FastFlow Customer' : 'Cliente FastFlow'),
     quantity: order.quantity,
     date: order.event.date,
     platform: 'FastFlow',
@@ -107,7 +110,7 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <Logo size={28} />
             <span style={{ fontWeight: 'bold', fontSize: '1.1rem', letterSpacing: '0.05em', color: '#fff' }}>
-              FASTFLOW VOUCHER
+              {t.ticket.officialVoucher}
             </span>
           </div>
 
@@ -147,7 +150,7 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
               marginBottom: '0.5rem',
             }}
           >
-            INGRESSO OFICIAL
+            {t.ticket.officialTicket}
           </span>
           <h2
             style={{
@@ -163,9 +166,9 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.85rem' }}>
             <div>
-              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>📅 Data</p>
+              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>📅 {t.ticket.date}</p>
               <p style={{ color: '#fff', fontWeight: 'bold', margin: 0 }}>
-                {new Date(order.event.date).toLocaleDateString('pt-BR', {
+                {new Date(order.event.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', {
                   day: '2-digit',
                   month: 'short',
                   year: 'numeric',
@@ -173,21 +176,23 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
               </p>
             </div>
             <div>
-              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>⏰ Horário</p>
+              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>⏰ {t.ticket.time}</p>
               <p style={{ color: '#fff', fontWeight: 'bold', margin: 0 }}>
-                {new Date(order.event.date).toLocaleTimeString('pt-BR', {
+                {new Date(order.event.date).toLocaleTimeString(language === 'en' ? 'en-US' : 'pt-BR', {
                   hour: '2-digit',
                   minute: '2-digit',
                 })}
               </p>
             </div>
             <div>
-              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>📍 Local</p>
+              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>📍 {t.ticket.location}</p>
               <p style={{ color: '#fff', fontWeight: 'bold', margin: 0 }}>{order.event.location}</p>
             </div>
             <div>
-              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>👤 Titular</p>
-              <p style={{ color: '#fff', fontWeight: 'bold', margin: 0 }}>{userName || 'Não informado'}</p>
+              <p style={{ color: '#9ca3af', margin: '0 0 0.2rem 0' }}>👤 {t.ticket.holder}</p>
+              <p style={{ color: '#fff', fontWeight: 'bold', margin: 0 }}>
+                {userName || (language === 'en' ? 'Not specified' : 'Não informado')}
+              </p>
             </div>
           </div>
         </div>
@@ -252,7 +257,7 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
 
           <div style={{ marginTop: '1rem', width: '100%' }}>
             <p style={{ fontSize: '0.8rem', color: '#9ca3af', margin: '0 0 0.25rem 0' }}>
-              Código do Pedido:
+              {t.ticket.orderCode}:
             </p>
             <p
               style={{
@@ -283,14 +288,14 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
               paddingTop: '0.75rem',
             }}
           >
-            <span>Ingressos: <strong>{order.quantity}x</strong></span>
+            <span>{t.ticket.ticketsQty}: <strong>{order.quantity}x</strong></span>
             <span style={{ color: '#4ade80', fontWeight: 'bold' }}>
-              Total: R$ {order.total.toFixed(2)}
+              {t.ticket.totalPaid}: {language === 'en' ? `$ ${order.total.toFixed(2)}` : `R$ ${order.total.toFixed(2)}`}
             </span>
           </div>
 
           <p style={{ fontSize: '0.7rem', color: '#6b7280', margin: '0.75rem 0 0' }}>
-            Apresente este QR Code na portaria do evento para validação de entrada.
+            {t.ticket.scanNotice}
           </p>
         </div>
 
@@ -323,7 +328,7 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
               gap: '0.5rem',
             }}
           >
-            🖨️ Imprimir / Salvar
+            🖨️ {t.ticket.printOrSave}
           </button>
           <button
             onClick={onClose}
@@ -338,7 +343,7 @@ export default function TicketModal({ order, userName, onClose }: TicketModalPro
               fontSize: '0.9rem',
             }}
           >
-            Fechar
+            {t.ticket.close}
           </button>
         </div>
       </div>
