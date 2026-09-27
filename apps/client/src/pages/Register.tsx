@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import api from '../services/api';
 
@@ -9,6 +11,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -19,7 +22,7 @@ export default function Register() {
       await api.post('/users/register', { name, email, password });
       navigate('/login');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao cadastrar');
+      setError(err.response?.data?.message || t.auth.registerError);
     } finally {
       setLoading(false);
     }
@@ -44,6 +47,11 @@ export default function Register() {
         }
       `}</style>
 
+      {/* Language Switcher */}
+      <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 10 }}>
+        <LanguageSwitcher />
+      </div>
+
       <div className="animate-blob" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #7c3aed 0%, #4c1d95 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.6 }} />
       <div className="animate-blob delay-300" style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #a855f7 0%, #6d28d9 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.5 }} />
       <div className="animate-blob delay-500" style={{ position: 'absolute', top: '40%', left: '5%', width: '250px', height: '250px', background: 'radial-gradient(circle, #c084fc 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.4 }} />
@@ -62,7 +70,7 @@ export default function Register() {
               FastFlow
             </span>
             <p style={{ color: '#c084fc', marginTop: '0.5rem', fontSize: '1.2rem', fontWeight: '300' }}>
-              Crie sua conta ⚡
+              {t.auth.createAccount}
             </p>
           </div>
 
@@ -74,12 +82,12 @@ export default function Register() {
 
           <form onSubmit={handleSubmit}>
             <div className="animate-fadeInUp delay-100" style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Nome</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.name}</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Seu nome completo"
+                placeholder={t.auth.namePlaceholder}
                 required
                 style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
                 onFocus={e => e.target.style.borderColor = '#a855f7'}
@@ -88,12 +96,12 @@ export default function Register() {
             </div>
 
             <div className="animate-fadeInUp delay-200" style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Email</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.email}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder={t.auth.emailPlaceholder}
                 required
                 style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
                 onFocus={e => e.target.style.borderColor = '#a855f7'}
@@ -102,12 +110,12 @@ export default function Register() {
             </div>
 
             <div className="animate-fadeInUp delay-300" style={{ marginBottom: '2rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Senha</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.password}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mínimo 6 caracteres"
+                placeholder={t.auth.passwordRegisterPlaceholder}
                 required
                 style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
                 onFocus={e => e.target.style.borderColor = '#a855f7'}
@@ -122,15 +130,15 @@ export default function Register() {
                 className="btn-purple animate-pulse-glow"
                 style={{ width: '100%', padding: '0.875rem', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.05em' }}
               >
-                {loading ? '⚡ Cadastrando...' : '⚡ Criar Conta'}
+                {loading ? t.auth.registering : t.auth.registerButton}
               </button>
             </div>
           </form>
 
           <p className="animate-fadeInUp delay-500" style={{ textAlign: 'center', marginTop: '1.5rem', color: '#9ca3af', fontSize: '0.9rem' }}>
-            Já tem conta?{' '}
+            {t.auth.alreadyHaveAccount}{' '}
             <Link to="/login" style={{ color: '#a855f7', textDecoration: 'none', fontWeight: 'bold' }}>
-              Entrar
+              {t.auth.loginHere}
             </Link>
           </p>
         </div>

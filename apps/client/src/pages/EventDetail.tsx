@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import api from '../services/api';
 
@@ -19,6 +21,7 @@ export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { t, language } = useLanguage();
   const [event, setEvent] = useState<Event | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -50,7 +53,7 @@ export default function EventDetail() {
         }
       });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao realizar compra');
+      setError(err.response?.data?.message || t.eventDetail.errorBuying);
     } finally {
       setBuying(false);
     }
@@ -60,14 +63,14 @@ export default function EventDetail() {
     <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' }}>
         <div className="animate-float" style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚡</div>
-        <p style={{ color: '#a855f7' }}>Carregando evento...</p>
+        <p style={{ color: '#a855f7' }}>{t.eventDetail.loading}</p>
       </div>
     </div>
   );
 
   if (!event) return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#a855f7' }}>Evento não encontrado.</p>
+      <p style={{ color: '#a855f7' }}>{t.eventDetail.notFound}</p>
     </div>
   );
 
@@ -104,9 +107,12 @@ export default function EventDetail() {
             FastFlow
           </span>
         </div>
-        <button onClick={() => navigate('/')} style={{ padding: '0.5rem 1rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-          ← Voltar
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <LanguageSwitcher />
+          <button onClick={() => navigate('/')} style={{ padding: '0.5rem 1rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
+            {t.eventDetail.back}
+          </button>
+        </div>
       </nav>
 
       <div className="event-hero" style={{
@@ -130,10 +136,10 @@ export default function EventDetail() {
 
             <div className="event-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
               {[
-                { icon: '📅', label: 'Data', value: new Date(event.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) },
-                { icon: '📍', label: 'Local', value: event.location },
-                { icon: '🎟', label: 'Disponíveis', value: `${disponiveis} ingressos`, color: disponiveis > 0 ? '#34d399' : '#f87171' },
-                { icon: '💰', label: 'Preço', value: `R$ ${event.price.toFixed(2)}`, color: '#a855f7' },
+                { icon: '📅', label: t.eventDetail.date, value: new Date(event.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) },
+                { icon: '📍', label: t.eventDetail.location, value: event.location },
+                { icon: '🎟', label: t.eventDetail.available, value: `${disponiveis} ${t.eventDetail.ticketsUnit}`, color: disponiveis > 0 ? '#34d399' : '#f87171' },
+                { icon: '💰', label: t.eventDetail.price, value: `${language === 'en' ? '$' : 'R$'} ${event.price.toFixed(2)}`, color: '#a855f7' },
               ].map((item, i) => (
                 <div key={i} className={`animate-fadeInUp delay-${(i + 1) * 100}`} style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '12px', padding: '0.875rem' }}>
                   <p style={{ color: '#6b7280', fontSize: '0.75rem', marginBottom: '0.25rem' }}>{item.icon} {item.label}</p>
@@ -150,9 +156,9 @@ export default function EventDetail() {
 
             {disponiveis > 0 && (
               <div className="animate-fadeInUp delay-400" style={{ borderTop: '1px solid rgba(124,58,237,0.2)', paddingTop: '1.5rem' }}>
-                <h3 style={{ color: '#c084fc', marginBottom: '1rem', fontSize: '1rem' }}>⚡ Comprar Ingressos</h3>
+                <h3 style={{ color: '#c084fc', marginBottom: '1rem', fontSize: '1rem' }}>{t.eventDetail.buyTicketsHeading}</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                  <label style={{ color: '#9ca3af', fontSize: '0.9rem' }}>Quantidade:</label>
+                  <label style={{ color: '#9ca3af', fontSize: '0.9rem' }}>{t.eventDetail.quantityLabel}</label>
                   <input
                     type="number"
                     min={1}
@@ -163,7 +169,7 @@ export default function EventDetail() {
                   />
                 </div>
                 <p style={{ color: '#9ca3af', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                  Total: <strong style={{ color: '#a855f7', fontSize: '1.1rem' }}>R$ {(event.price * quantity).toFixed(2)}</strong>
+                  {t.eventDetail.total}: <strong style={{ color: '#a855f7', fontSize: '1.1rem' }}>{language === 'en' ? '$' : 'R$'} {(event.price * quantity).toFixed(2)}</strong>
                 </p>
                 <button
                   onClick={handleBuy}
@@ -171,14 +177,14 @@ export default function EventDetail() {
                   className="btn-purple animate-pulse-glow"
                   style={{ width: '100%', padding: '1rem', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: buying ? 'not-allowed' : 'pointer', letterSpacing: '0.05em' }}
                 >
-                  {buying ? '⚡ Processando...' : '🎟 Comprar Ingresso'}
+                  {buying ? t.eventDetail.processing : t.eventDetail.buyButton}
                 </button>
               </div>
             )}
 
             {disponiveis === 0 && (
               <div style={{ textAlign: 'center', padding: '1.5rem', background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)', borderRadius: '12px' }}>
-                <p style={{ color: '#f87171', fontWeight: 'bold', fontSize: '1rem' }}>❌ Ingressos esgotados!</p>
+                <p style={{ color: '#f87171', fontWeight: 'bold', fontSize: '1rem' }}>{t.eventDetail.soldOutBadge}</p>
               </div>
             )}
           </div>

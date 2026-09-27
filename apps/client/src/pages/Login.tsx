@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import api from '../services/api';
 
@@ -10,6 +12,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -21,7 +24,7 @@ export default function Login() {
       login(data.token, data.user);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao fazer login');
+      setError(err.response?.data?.message || t.auth.loginError);
     } finally {
       setLoading(false);
     }
@@ -46,6 +49,11 @@ export default function Login() {
         }
       `}</style>
 
+      {/* Language Switcher */}
+      <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 10 }}>
+        <LanguageSwitcher />
+      </div>
+
       <div className="animate-blob" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #7c3aed 0%, #4c1d95 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.6 }} />
       <div className="animate-blob delay-300" style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #a855f7 0%, #6d28d9 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.5 }} />
       <div className="animate-blob delay-500" style={{ position: 'absolute', bottom: '30%', right: '5%', width: '250px', height: '250px', background: 'radial-gradient(circle, #c084fc 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.4 }} />
@@ -64,7 +72,7 @@ export default function Login() {
               FastFlow
             </span>
             <p style={{ color: '#c084fc', marginTop: '0.5rem', fontSize: '1.2rem', fontWeight: '300' }}>
-              Bem-vindo de volta! ⚡
+              {t.auth.welcomeBack}
             </p>
           </div>
 
@@ -76,12 +84,12 @@ export default function Login() {
 
           <form onSubmit={handleSubmit}>
             <div className="animate-fadeInUp delay-200" style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Email</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.email}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder={t.auth.emailPlaceholder}
                 required
                 style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
                 onFocus={e => e.target.style.borderColor = '#a855f7'}
@@ -90,12 +98,12 @@ export default function Login() {
             </div>
 
             <div className="animate-fadeInUp delay-300" style={{ marginBottom: '2rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>Senha</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.password}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t.auth.passwordPlaceholder}
                 required
                 style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
                 onFocus={e => e.target.style.borderColor = '#a855f7'}
@@ -110,15 +118,15 @@ export default function Login() {
                 className="btn-purple animate-pulse-glow"
                 style={{ width: '100%', padding: '0.875rem', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.05em' }}
               >
-                {loading ? '⚡ Entrando...' : '⚡ Entrar'}
+                {loading ? t.auth.loggingIn : t.auth.loginButton}
               </button>
             </div>
           </form>
 
           <p className="animate-fadeInUp delay-500" style={{ textAlign: 'center', marginTop: '1.5rem', color: '#9ca3af', fontSize: '0.9rem' }}>
-            Não tem conta?{' '}
+            {t.auth.dontHaveAccount}{' '}
             <Link to="/register" style={{ color: '#a855f7', textDecoration: 'none', fontWeight: 'bold' }}>
-              Cadastre-se
+              {t.auth.signUpHere}
             </Link>
           </p>
         </div>

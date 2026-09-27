@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import api from '../services/api';
 
@@ -57,6 +59,7 @@ interface OrderItem {
 
 export default function Admin() {
   const { isAuthenticated, isAdmin, user } = useAuth();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'events' | 'users' | 'orders'>('dashboard');
@@ -104,7 +107,7 @@ export default function Admin() {
       if (ordersRes.data) setOrders(ordersRes.data);
     } catch (err: any) {
       setMessage({
-        text: err.response?.data?.message || 'Erro ao carregar dados do painel',
+        text: err.response?.data?.message || t.admin.errorLoading,
         type: 'error',
       });
     } finally {
@@ -124,7 +127,7 @@ export default function Admin() {
         price: Number(newEvent.price),
       });
 
-      setMessage({ text: 'Evento criado com sucesso!', type: 'success' });
+      setMessage({ text: t.admin.eventCreatedSuccess, type: 'success' });
       setShowModal(false);
       setNewEvent({
         name: '',
@@ -135,11 +138,10 @@ export default function Admin() {
         price: 50,
       });
 
-      // Recarregar dados
       loadData();
     } catch (err: any) {
       setMessage({
-        text: err.response?.data?.message || 'Erro ao criar evento',
+        text: err.response?.data?.message || t.admin.errorCreating,
         type: 'error',
       });
     } finally {
@@ -148,30 +150,30 @@ export default function Admin() {
   };
 
   const handleDeleteEvent = async (id: string, name: string) => {
-    if (!window.confirm(`Tem certeza que deseja excluir o evento "${name}"?`)) return;
+    if (!window.confirm(`${t.admin.confirmDeleteEvent} "${name}"?`)) return;
 
     try {
       await api.delete(`/admin/events/${id}`);
-      setMessage({ text: 'Evento excluído com sucesso!', type: 'success' });
+      setMessage({ text: t.admin.eventDeletedSuccess, type: 'success' });
       loadData();
     } catch (err: any) {
       setMessage({
-        text: err.response?.data?.message || 'Erro ao excluir evento',
+        text: err.response?.data?.message || t.admin.errorDeleting,
         type: 'error',
       });
     }
   };
 
   const handlePromoteUser = async (id: string, name: string) => {
-    if (!window.confirm(`Deseja promover o usuário "${name}" a Administrador?`)) return;
+    if (!window.confirm(`${t.admin.confirmPromoteUser} "${name}" ${t.admin.confirmPromoteSuffix}`)) return;
 
     try {
       await api.patch(`/admin/users/${id}/promote`, { role: 'admin' });
-      setMessage({ text: `Usuário ${name} promovido a Admin!`, type: 'success' });
+      setMessage({ text: `${name} ${t.admin.userPromotedSuccess}`, type: 'success' });
       loadData();
     } catch (err: any) {
       setMessage({
-        text: err.response?.data?.message || 'Erro ao promover usuário',
+        text: err.response?.data?.message || t.admin.errorPromoting,
         type: 'error',
       });
     }
@@ -181,9 +183,9 @@ export default function Admin() {
     return (
       <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <Logo size={48} />
-        <h1 style={{ marginTop: '1.5rem', color: '#ef4444', fontSize: '1.75rem' }}>Acesso Restrito</h1>
+        <h1 style={{ marginTop: '1.5rem', color: '#ef4444', fontSize: '1.75rem' }}>{t.admin.restrictedAccess}</h1>
         <p style={{ color: '#9ca3af', marginTop: '0.5rem', textAlign: 'center', maxWidth: '400px' }}>
-          Você precisa de privilégios de Administrador para acessar esta página.
+          {t.admin.restrictedNotice}
         </p>
         <button
           onClick={() => navigate('/')}
@@ -198,7 +200,7 @@ export default function Admin() {
             fontWeight: 'bold',
           }}
         >
-          Voltar para Home
+          {t.admin.backToHome}
         </button>
       </div>
     );
@@ -227,12 +229,13 @@ export default function Admin() {
             FastFlow
           </span>
           <span style={{ background: '#7c3aed', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', padding: '0.2rem 0.6rem', borderRadius: '12px', marginLeft: '0.5rem' }}>
-            ADMIN
+            {t.admin.adminBadge}
           </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Admin: <strong style={{ color: '#c084fc' }}>{user?.name}</strong></span>
+          <LanguageSwitcher />
+          <span style={{ color: '#9ca3af', fontSize: '0.875rem' }}>{t.admin.adminUserPrefix} <strong style={{ color: '#c084fc' }}>{user?.name}</strong></span>
           <button
             onClick={() => navigate('/')}
             style={{
@@ -246,7 +249,7 @@ export default function Admin() {
               transition: 'all 0.2s',
             }}
           >
-            ← Ir para o Site
+            {t.admin.backToSite}
           </button>
         </div>
       </header>
@@ -293,7 +296,7 @@ export default function Admin() {
               transition: '0.2s',
             }}
           >
-            📊 Visão Geral
+            {t.admin.overview}
           </button>
           <button
             onClick={() => setActiveTab('events')}
@@ -308,7 +311,7 @@ export default function Admin() {
               transition: '0.2s',
             }}
           >
-            🎉 Gerenciar Eventos ({events.length})
+            {t.admin.manageEvents} ({events.length})
           </button>
           <button
             onClick={() => setActiveTab('orders')}
@@ -323,7 +326,7 @@ export default function Admin() {
               transition: '0.2s',
             }}
           >
-            🎟️ Pedidos ({orders.length})
+            {t.admin.allOrders} ({orders.length})
           </button>
           <button
             onClick={() => setActiveTab('users')}
@@ -338,14 +341,14 @@ export default function Admin() {
               transition: '0.2s',
             }}
           >
-            👥 Usuários ({users.length})
+            {t.admin.users} ({users.length})
           </button>
         </div>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: '#9ca3af' }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⏳</div>
-            Carregando informações...
+            {t.admin.loadingData}
           </div>
         ) : (
           <>
@@ -354,32 +357,32 @@ export default function Admin() {
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
                   <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>Total de Usuários</span>
+                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalUsers}</span>
                     <h2 style={{ fontSize: '2rem', color: '#c084fc', marginTop: '0.5rem' }}>{stats?.totalUsers ?? users.length}</h2>
                   </div>
                   <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>Total de Eventos</span>
+                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalEvents}</span>
                     <h2 style={{ fontSize: '2rem', color: '#38bdf8', marginTop: '0.5rem' }}>{stats?.totalEvents ?? events.length}</h2>
                   </div>
                   <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>Total de Pedidos</span>
+                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalOrders}</span>
                     <h2 style={{ fontSize: '2rem', color: '#facc15', marginTop: '0.5rem' }}>{stats?.totalOrders ?? orders.length}</h2>
                   </div>
                   <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>Ingressos Vendidos</span>
+                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.ticketsSold}</span>
                     <h2 style={{ fontSize: '2rem', color: '#4ade80', marginTop: '0.5rem' }}>{stats?.totalTicketsSold ?? 0}</h2>
                   </div>
                   <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>Faturamento Estimado</span>
+                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalRevenue}</span>
                     <h2 style={{ fontSize: '2rem', color: '#a855f7', marginTop: '0.5rem' }}>
-                      R$ {(stats?.totalRevenue ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      {language === 'en' ? '$' : 'R$'} {(stats?.totalRevenue ?? 0).toLocaleString(language === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2 })}
                     </h2>
                   </div>
                 </div>
 
                 {/* Ações Rápidas */}
                 <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#e2e8f0' }}>⚡ Ações Rápidas</h3>
+                  <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#e2e8f0' }}>{t.admin.quickActions}</h3>
                   <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                     <button
                       onClick={() => { setActiveTab('events'); setShowModal(true); }}
@@ -394,7 +397,7 @@ export default function Admin() {
                         fontSize: '0.9rem',
                       }}
                     >
-                      + Cadastrar Novo Evento
+                      {t.admin.newEventBtn}
                     </button>
                     <button
                       onClick={() => setActiveTab('orders')}
@@ -409,7 +412,7 @@ export default function Admin() {
                         fontSize: '0.9rem',
                       }}
                     >
-                      Ver Todos os Pedidos
+                      {t.admin.viewAllOrdersBtn}
                     </button>
                   </div>
                 </div>
@@ -420,7 +423,7 @@ export default function Admin() {
             {activeTab === 'events' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0' }}>Eventos Cadastrados</h2>
+                  <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0' }}>{t.admin.eventsListTitle}</h2>
                   <button
                     onClick={() => setShowModal(true)}
                     style={{
@@ -434,7 +437,7 @@ export default function Admin() {
                       fontSize: '0.875rem',
                     }}
                   >
-                    + Novo Evento
+                    {t.admin.newEventModalBtn}
                   </button>
                 </div>
 
@@ -442,12 +445,12 @@ export default function Admin() {
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid #2d1b69', color: '#9ca3af' }}>
-                        <th style={{ padding: '1rem' }}>Nome</th>
-                        <th style={{ padding: '1rem' }}>Data</th>
-                        <th style={{ padding: '1rem' }}>Local</th>
-                        <th style={{ padding: '1rem' }}>Preço</th>
-                        <th style={{ padding: '1rem' }}>Ingressos</th>
-                        <th style={{ padding: '1rem', textAlign: 'right' }}>Ações</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableName}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableDate}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableLocation}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tablePrice}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableTickets}</th>
+                        <th style={{ padding: '1rem', textAlign: 'right' }}>{t.admin.tableActions}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -455,10 +458,10 @@ export default function Admin() {
                         <tr key={ev.id} style={{ borderBottom: '1px solid #1a182d' }}>
                           <td style={{ padding: '1rem', fontWeight: 'bold' }}>{ev.name}</td>
                           <td style={{ padding: '1rem', color: '#9ca3af' }}>
-                            {new Date(ev.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            {new Date(ev.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           </td>
                           <td style={{ padding: '1rem', color: '#9ca3af' }}>{ev.location}</td>
-                          <td style={{ padding: '1rem', color: '#4ade80' }}>R$ {ev.price.toFixed(2)}</td>
+                          <td style={{ padding: '1rem', color: '#4ade80' }}>{language === 'en' ? '$' : 'R$'} {ev.price.toFixed(2)}</td>
                           <td style={{ padding: '1rem' }}>
                             <span style={{ color: '#c084fc' }}>{ev.soldTickets}</span> / {ev.totalTickets}
                           </td>
@@ -475,7 +478,7 @@ export default function Admin() {
                                 fontSize: '0.8rem',
                               }}
                             >
-                              Excluir
+                              {t.admin.deleteBtn}
                             </button>
                           </td>
                         </tr>
@@ -489,18 +492,18 @@ export default function Admin() {
             {/* TAB PEDIDOS */}
             {activeTab === 'orders' && (
               <div>
-                <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '1.5rem' }}>Todos os Pedidos</h2>
+                <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '1.5rem' }}>{t.admin.allOrders}</h2>
                 <div style={{ overflowX: 'auto', background: '#12111f', borderRadius: '12px', border: '1px solid #2d1b69' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid #2d1b69', color: '#9ca3af' }}>
-                        <th style={{ padding: '1rem' }}>ID Pedido</th>
-                        <th style={{ padding: '1rem' }}>Cliente</th>
-                        <th style={{ padding: '1rem' }}>Evento</th>
-                        <th style={{ padding: '1rem' }}>Qtd</th>
-                        <th style={{ padding: '1rem' }}>Total</th>
-                        <th style={{ padding: '1rem' }}>Status</th>
-                        <th style={{ padding: '1rem' }}>Data</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableOrderId}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableCustomer}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableEvent}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableQty}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableTotal}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableStatus}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableDate}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -510,12 +513,12 @@ export default function Admin() {
                             {ord.id.slice(0, 8)}...
                           </td>
                           <td style={{ padding: '1rem' }}>
-                            <div style={{ fontWeight: 'bold' }}>{ord.user?.name || 'Anônimo'}</div>
+                            <div style={{ fontWeight: 'bold' }}>{ord.user?.name || t.admin.anonymous}</div>
                             <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{ord.user?.email}</div>
                           </td>
                           <td style={{ padding: '1rem', color: '#d8b4fe' }}>{ord.event?.name}</td>
                           <td style={{ padding: '1rem' }}>{ord.quantity}</td>
-                          <td style={{ padding: '1rem', color: '#4ade80', fontWeight: 'bold' }}>R$ {ord.total.toFixed(2)}</td>
+                          <td style={{ padding: '1rem', color: '#4ade80', fontWeight: 'bold' }}>{language === 'en' ? '$' : 'R$'} {ord.total.toFixed(2)}</td>
                           <td style={{ padding: '1rem' }}>
                             <span
                               style={{
@@ -541,7 +544,7 @@ export default function Admin() {
                             </span>
                           </td>
                           <td style={{ padding: '1rem', color: '#9ca3af' }}>
-                            {new Date(ord.createdAt).toLocaleDateString('pt-BR')}
+                            {new Date(ord.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
                           </td>
                         </tr>
                       ))}
@@ -554,17 +557,17 @@ export default function Admin() {
             {/* TAB USUÁRIOS */}
             {activeTab === 'users' && (
               <div>
-                <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '1.5rem' }}>Usuários Cadastrados</h2>
+                <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '1.5rem' }}>{t.admin.users}</h2>
                 <div style={{ overflowX: 'auto', background: '#12111f', borderRadius: '12px', border: '1px solid #2d1b69' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid #2d1b69', color: '#9ca3af' }}>
-                        <th style={{ padding: '1rem' }}>Nome</th>
-                        <th style={{ padding: '1rem' }}>Email</th>
-                        <th style={{ padding: '1rem' }}>Permissão</th>
-                        <th style={{ padding: '1rem' }}>Pedidos</th>
-                        <th style={{ padding: '1rem' }}>Cadastro</th>
-                        <th style={{ padding: '1rem', textAlign: 'right' }}>Ações</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableName}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableEmail}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableRole}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableOrdersCount}</th>
+                        <th style={{ padding: '1rem' }}>{t.admin.tableCreatedAt}</th>
+                        <th style={{ padding: '1rem', textAlign: 'right' }}>{t.admin.tableActions}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -588,7 +591,7 @@ export default function Admin() {
                           </td>
                           <td style={{ padding: '1rem' }}>{u._count?.orders ?? 0}</td>
                           <td style={{ padding: '1rem', color: '#9ca3af' }}>
-                            {new Date(u.createdAt).toLocaleDateString('pt-BR')}
+                            {new Date(u.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
                           </td>
                           <td style={{ padding: '1rem', textAlign: 'right' }}>
                             {u.role !== 'admin' ? (
@@ -604,10 +607,10 @@ export default function Admin() {
                                   fontSize: '0.8rem',
                                 }}
                               >
-                                Tornar Admin
+                                {t.admin.promoteToAdminBtn}
                               </button>
                             ) : (
-                              <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>Administrador</span>
+                              <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{t.admin.administratorRole}</span>
                             )}
                           </td>
                         </tr>
@@ -648,7 +651,7 @@ export default function Admin() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.25rem', color: '#fff' }}>Criar Novo Evento</h3>
+              <h3 style={{ fontSize: '1.25rem', color: '#fff' }}>{t.admin.createEventTitle}</h3>
               <button
                 onClick={() => setShowModal(false)}
                 style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: '1.25rem' }}
@@ -659,7 +662,7 @@ export default function Admin() {
 
             <form onSubmit={handleCreateEvent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>Nome do Evento</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.eventNameLabel}</label>
                 <input
                   type="text"
                   required
@@ -673,12 +676,12 @@ export default function Admin() {
                     borderRadius: '8px',
                     color: '#fff',
                   }}
-                  placeholder="Ex: Festival de Rock 2026"
+                  placeholder={t.admin.eventNamePlaceholder}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>Descrição</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.descriptionLabel}</label>
                 <textarea
                   required
                   rows={3}
@@ -693,13 +696,13 @@ export default function Admin() {
                     color: '#fff',
                     resize: 'vertical',
                   }}
-                  placeholder="Detalhes sobre atrações, horários, etc."
+                  placeholder={t.admin.descriptionPlaceholder}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>Data e Hora</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.dateTimeLabel}</label>
                   <input
                     type="datetime-local"
                     required
@@ -716,7 +719,7 @@ export default function Admin() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>Local</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.locationLabel}</label>
                   <input
                     type="text"
                     required
@@ -730,14 +733,14 @@ export default function Admin() {
                       borderRadius: '8px',
                       color: '#fff',
                     }}
-                    placeholder="Ex: Arena Show, SP"
+                    placeholder={t.admin.locationPlaceholder}
                   />
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>Total de Ingressos</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.totalTicketsLabel}</label>
                   <input
                     type="number"
                     min="1"
@@ -755,7 +758,7 @@ export default function Admin() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>Preço Unitário (R$)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.unitPriceLabel}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -788,7 +791,7 @@ export default function Admin() {
                     cursor: 'pointer',
                   }}
                 >
-                  Cancelar
+                  {t.admin.cancelBtn}
                 </button>
                 <button
                   type="submit"
@@ -804,7 +807,7 @@ export default function Admin() {
                     opacity: submittingEvent ? 0.7 : 1,
                   }}
                 >
-                  {submittingEvent ? 'Salvando...' : 'Salvar Evento'}
+                  {submittingEvent ? t.admin.savingBtn : t.admin.saveEventBtn}
                 </button>
               </div>
             </form>

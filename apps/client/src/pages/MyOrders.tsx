@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import api from '../services/api';
 import TicketModal, { type TicketOrder } from '../components/TicketModal';
@@ -13,6 +15,7 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,14 +27,15 @@ export default function MyOrders() {
       setOrders(data);
       setLoading(false);
     });
-  }, []);
+  }, [isAuthenticated, navigate]);
 
   async function handleCancel(id: string) {
+    if (!window.confirm(t.orders.confirmCancel)) return;
     try {
       await api.patch(`/orders/${id}/cancel`);
       setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'cancelled' } : o));
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Erro ao cancelar pedido');
+      alert(err.response?.data?.message || t.orders.cancelError);
     }
   }
 
@@ -69,12 +73,13 @@ export default function MyOrders() {
 
         {/* Desktop */}
         <div className="orders-desktop-nav" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+          <LanguageSwitcher />
+          <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>{t.nav.hello}, {user?.name}!</span>
           <button onClick={() => navigate('/')} style={{ padding: '0.5rem 1rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-            Início
+            {t.nav.home}
           </button>
           <button onClick={logout} style={{ padding: '0.5rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-            Sair
+            {t.nav.logout}
           </button>
         </div>
 
@@ -98,35 +103,38 @@ export default function MyOrders() {
           flexDirection: 'column',
           gap: '0.75rem',
         }}>
-          <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>Olá, {user?.name}!</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>{t.nav.hello}, {user?.name}!</span>
+            <LanguageSwitcher />
+          </div>
           <button onClick={() => { navigate('/'); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer' }}>
-            Início
+            {t.nav.home}
           </button>
           <button onClick={() => { logout(); setMenuOpen(false); }} style={{ padding: '0.75rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer' }}>
-            Sair
+            {t.nav.logout}
           </button>
         </div>
       )}
 
       <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '0 1rem' }}>
         <h2 className="animate-fadeInUp" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-          🎟 Meus Pedidos
+          {t.orders.title}
         </h2>
         <p className="animate-fadeInUp delay-100" style={{ color: '#6b7280', marginBottom: '2rem' }}>
-          Gerencie seus ingressos
+          {t.orders.subtitle}
         </p>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '4rem' }}>
             <div className="animate-float" style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚡</div>
-            <p style={{ color: '#a855f7' }}>Carregando pedidos...</p>
+            <p style={{ color: '#a855f7' }}>{t.orders.loading}</p>
           </div>
         ) : orders.length === 0 ? (
           <div className="animate-fadeInUp glass" style={{ borderRadius: '20px', padding: '3rem 1.5rem', textAlign: 'center' }}>
             <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎭</p>
-            <p style={{ color: '#9ca3af', fontSize: '1rem', marginBottom: '1.5rem' }}>Você ainda não tem pedidos.</p>
+            <p style={{ color: '#9ca3af', fontSize: '1rem', marginBottom: '1.5rem' }}>{t.orders.noOrders}</p>
             <button onClick={() => navigate('/')} className="btn-purple" style={{ padding: '0.75rem 2rem', color: '#fff', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
-              Ver Eventos ⚡
+              {t.orders.exploreEvents}
             </button>
           </div>
         ) : (
@@ -156,19 +164,19 @@ export default function MyOrders() {
                     fontWeight: 'bold',
                     whiteSpace: 'nowrap',
                   }}>
-                    {order.status === 'cancelled' ? '❌ Cancelado' : '✅ Confirmado'}
+                    {order.status === 'cancelled' ? t.orders.cancelled : t.orders.confirmed}
                   </span>
                 </div>
 
                 <div style={{ padding: '1.25rem' }}>
                   <div className="orders-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>📅 {new Date(order.event.date).toLocaleDateString('pt-BR')}</p>
+                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>📅 {new Date(order.event.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}</p>
                     <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>📍 {order.event.location}</p>
-                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>🎟 {order.quantity} ingresso(s)</p>
-                    <p style={{ color: '#a855f7', margin: 0, fontWeight: 'bold', fontSize: '0.85rem' }}>💰 R$ {order.total.toFixed(2)}</p>
+                    <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>🎟 {order.quantity} {t.orders.ticketsQty}</p>
+                    <p style={{ color: '#a855f7', margin: 0, fontWeight: 'bold', fontSize: '0.85rem' }}>💰 {language === 'en' ? '$' : 'R$'} {order.total.toFixed(2)}</p>
                   </div>
                   <p style={{ color: '#4b5563', fontSize: '0.8rem', marginBottom: order.status !== 'cancelled' ? '1rem' : '0' }}>
-                    Pedido em {new Date(order.createdAt).toLocaleDateString('pt-BR')}
+                    {t.orders.orderedOn} {new Date(order.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
                   </p>
 
                   {order.status !== 'cancelled' && (
@@ -189,7 +197,7 @@ export default function MyOrders() {
                           gap: '0.4rem',
                         }}
                       >
-                        🎟️ Ver Ingresso (QR Code)
+                        {t.orders.viewTicket}
                       </button>
                       <button
                         onClick={() => handleCancel(order.id)}
@@ -203,7 +211,7 @@ export default function MyOrders() {
                           fontSize: '0.875rem',
                         }}
                       >
-                        Cancelar Pedido
+                        {t.orders.cancelOrder}
                       </button>
                     </div>
                   )}

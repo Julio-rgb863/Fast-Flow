@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import api from '../services/api';
 
 export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const { orderId, total, eventName, quantity } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,7 +20,7 @@ export default function Payment() {
       const { data } = await api.post('/stripe/checkout', { orderId });
       window.location.href = data.url;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao processar pagamento');
+      setError(err.response?.data?.message || t.payment.error);
     } finally {
       setLoading(false);
     }
@@ -43,9 +46,12 @@ export default function Payment() {
             FastFlow
           </span>
         </div>
-        <button onClick={() => navigate(-1)} style={{ padding: '0.5rem 1.25rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer' }}>
-          ← Voltar
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <LanguageSwitcher />
+          <button onClick={() => navigate(-1)} style={{ padding: '0.5rem 1.25rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer' }}>
+            {t.payment.back}
+          </button>
+        </div>
       </nav>
 
       <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '0 1.5rem' }}>
@@ -53,18 +59,18 @@ export default function Payment() {
 
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
             <div className="animate-float" style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>💳</div>
-            <h2 style={{ color: '#fff', marginBottom: '0.5rem' }}>Finalizar Pagamento</h2>
+            <h2 style={{ color: '#fff', marginBottom: '0.5rem' }}>{t.payment.title}</h2>
             <p style={{ color: '#9ca3af', fontSize: '0.9rem' }}>{eventName}</p>
           </div>
 
           <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '12px', padding: '1rem', marginBottom: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: '#9ca3af' }}>Quantidade:</span>
-              <span style={{ color: '#fff' }}>{quantity} ingresso(s)</span>
+              <span style={{ color: '#9ca3af' }}>{t.payment.quantity}</span>
+              <span style={{ color: '#fff' }}>{quantity} {t.payment.ticketsQty}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#9ca3af' }}>Total:</span>
-              <span style={{ color: '#a855f7', fontWeight: 'bold', fontSize: '1.2rem' }}>R$ {total?.toFixed(2)}</span>
+              <span style={{ color: '#9ca3af' }}>{t.payment.total}</span>
+              <span style={{ color: '#a855f7', fontWeight: 'bold', fontSize: '1.2rem' }}>{language === 'en' ? '$' : 'R$'} {total?.toFixed(2)}</span>
             </div>
           </div>
 
@@ -80,11 +86,11 @@ export default function Payment() {
             className="btn-purple animate-pulse-glow"
             style={{ width: '100%', padding: '1rem', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer' }}
           >
-            {loading ? '⚡ Processando...' : '💳 Pagar com Cartão'}
+            {loading ? t.payment.processing : t.payment.payButton}
           </button>
 
           <p style={{ textAlign: 'center', marginTop: '1rem', color: '#6b7280', fontSize: '0.8rem' }}>
-            🔒 Pagamento seguro via Stripe
+            {t.payment.secureNotice}
           </p>
         </div>
       </div>
