@@ -1,18 +1,27 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import api from '../services/api';
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useLanguage();
+  const orderId = searchParams.get('orderId');
 
   useEffect(() => {
+    if (orderId) {
+      api.post('/stripe/confirm', { orderId }).catch(() => {
+        // Silencioso se já estiver confirmado
+      });
+    }
+
     const timer = setTimeout(() => {
       navigate('/my-orders');
     }, 5000);
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, orderId]);
 
   return (
     <div style={{

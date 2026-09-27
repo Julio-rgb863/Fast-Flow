@@ -13,14 +13,29 @@ import stripeRouter from './routes/stripe';
 import adminRouter from './routes/admin';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 // Helmet
 app.use(helmet());
 
-// CORS
+// CORS dinâmico para suportar localhost, Vercel e domínio configurado
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const isAllowed = allowedOrigins.some((allowed) => origin === allowed || origin.startsWith(allowed)) ||
+                      origin.endsWith('.vercel.app');
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true,
 }));
 
@@ -77,5 +92,5 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 app.listen(PORT, () => {
-  logger.info(`Servidor rodando em http://localhost:${PORT}`);
+  logger.info(`Servidor rodando na porta ${PORT}`);
 });

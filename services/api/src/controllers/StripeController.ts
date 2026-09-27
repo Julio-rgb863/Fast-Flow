@@ -1,4 +1,4 @@
- import { Response } from 'express';
+import { Response } from 'express';
 import Stripe from 'stripe';
 import { PrismaClient } from '@prisma/client';
 import { AuthRequest } from '../middleware/auth';
@@ -11,6 +11,7 @@ export class StripeController {
     try {
       const { orderId } = req.body;
       const userId = req.userId as string;
+      const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
 
       const order = await prisma.order.findUnique({
         where: { id: orderId },
@@ -37,8 +38,8 @@ export class StripeController {
           },
         ],
         mode: 'payment',
-        success_url: `http://localhost:5173/payment/success?orderId=${order.id}`,
-        cancel_url: `http://localhost:5173/payment/cancel`,
+        success_url: `${clientUrl}/payment/success?orderId=${order.id}`,
+        cancel_url: `${clientUrl}/payment/cancel`,
         metadata: {
           orderId: order.id,
         },
@@ -50,4 +51,27 @@ export class StripeController {
       return res.status(500).json({ message: 'Erro ao criar sessão de pagamento', error: error.message });
     }
   };
-} 
+
+  confirmPayment = async (req: AuthRequest, res: Response) => {
+    try {
+      const { orderId } = req.body;
+      const userId = req.userId as string;
+
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+      });
+
+      if (!order) return res.status(404).json({ message: 'Pedido não encontrado' });
+      if (order.userId !== userId) return res.status(403).json({ message: 'Sem permissão' });
+
+      const updated = await prisma.order.update({
+        where: { id: orderId },
+        data: { status: 'paid' },
+      });
+
+      return res.json({ message: 'Pagamento confirmado com sucesso', order: updated });
+    } catch (error: any) {
+      return res.status(500).json({ message: 'Erro ao confirmar pagamento', error: error.message });
+    }
+  };
+}

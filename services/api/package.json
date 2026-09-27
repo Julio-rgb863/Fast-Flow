@@ -1,11 +1,13 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "build": "prisma generate && tsc",
+    "postinstall": "prisma generate",
+    "start": "node dist/index.js",
+    "prisma:deploy": "prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
