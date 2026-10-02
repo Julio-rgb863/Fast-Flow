@@ -15,6 +15,9 @@ import adminRouter from './routes/admin';
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
+// Necessário para funcionar atrás de proxy (Render, Vercel, etc.)
+app.set('trust proxy', 1);
+
 // Helmet
 app.use(helmet());
 
