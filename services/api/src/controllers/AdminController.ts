@@ -164,6 +164,36 @@ export const promoteUser = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const requestingUserId = (req as any).userId as string;
+
+    if (id === requestingUserId) {
+      return res.status(400).json({ message: 'Você não pode excluir sua própria conta.' });
+    }
+
+    const userExists = await prisma.user.findUnique({ where: { id } });
+    if (!userExists) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    if (userExists.role === 'admin') {
+      return res.status(403).json({ message: 'Não é possível excluir outro administrador.' });
+    }
+
+    // Remove pedidos do usuário antes de deletar
+    await prisma.$transaction([
+      prisma.order.deleteMany({ where: { userId: id } }),
+      prisma.user.delete({ where: { id } }),
+    ]);
+
+    return res.json({ message: `Usuário "${userExists.name}" excluído com sucesso.` });
+  } catch (error) {
+    return res.status(500).json({ message: 'Erro ao excluir usuário' });
+  }
+};
+
 export class AdminController {
   getDashboardStats = getDashboardStats;
   listUsers = listUsers;
@@ -171,4 +201,5 @@ export class AdminController {
   createEvent = createEvent;
   deleteEvent = deleteEvent;
   promoteUser = promoteUser;
+  deleteUser = deleteUser;
 }

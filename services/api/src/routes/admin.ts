@@ -8,6 +8,7 @@ import {
   createEvent,
   deleteEvent,
   promoteUser,
+  deleteUser,
 } from "../controllers/AdminController";
 
 const router = Router();
@@ -22,5 +23,6 @@ router.get("/orders", listAllOrders);
 router.post("/events", createEvent);
 router.delete("/events/:id", deleteEvent);
 router.patch("/users/:id/promote", promoteUser);
+router.delete("/users/:id", deleteUser);
 
-export default router;
+export default router;

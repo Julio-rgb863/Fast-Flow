@@ -179,6 +179,22 @@ export default function Admin() {
     }
   };
 
+  const handleDeleteUser = async (id: string, name: string) => {
+    if (!window.confirm(`Tem certeza que deseja excluir o usuário "${name}"? Esta ação não pode ser desfeita.`)) return;
+
+    try {
+      await api.delete(`/admin/users/${id}`);
+      setMessage({ text: `Usuário "${name}" excluído com sucesso.`, type: 'success' });
+      loadData();
+    } catch (err: any) {
+      setMessage({
+        text: err.response?.data?.message || 'Erro ao excluir usuário.',
+        type: 'error',
+      });
+    }
+  };
+
+
   if (!isAdmin && !loading) {
     return (
       <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
@@ -594,25 +610,44 @@ export default function Admin() {
                             {new Date(u.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
                           </td>
                           <td style={{ padding: '1rem', textAlign: 'right' }}>
-                            {u.role !== 'admin' ? (
-                              <button
-                                onClick={() => handlePromoteUser(u.id, u.name)}
-                                style={{
-                                  padding: '0.4rem 0.8rem',
-                                  background: '#1e1b4b',
-                                  border: '1px solid #7c3aed',
-                                  color: '#c084fc',
-                                  borderRadius: '6px',
-                                  cursor: 'pointer',
-                                  fontSize: '0.8rem',
-                                }}
-                              >
-                                {t.admin.promoteToAdminBtn}
-                              </button>
-                            ) : (
-                              <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{t.admin.administratorRole}</span>
-                            )}
+                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                              {u.role !== 'admin' ? (
+                                <button
+                                  onClick={() => handlePromoteUser(u.id, u.name)}
+                                  style={{
+                                    padding: '0.4rem 0.8rem',
+                                    background: '#1e1b4b',
+                                    border: '1px solid #7c3aed',
+                                    color: '#c084fc',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontSize: '0.8rem',
+                                  }}
+                                >
+                                  {t.admin.promoteToAdminBtn}
+                                </button>
+                              ) : (
+                                <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{t.admin.administratorRole}</span>
+                              )}
+                              {u.role !== 'admin' && u.id !== user?.id && (
+                                <button
+                                  onClick={() => handleDeleteUser(u.id, u.name)}
+                                  style={{
+                                    padding: '0.4rem 0.8rem',
+                                    background: '#3b1219',
+                                    border: '1px solid #dc2626',
+                                    color: '#f87171',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontSize: '0.8rem',
+                                  }}
+                                >
+                                  🗑️ Excluir
+                                </button>
+                              )}
+                            </div>
                           </td>
+
                         </tr>
                       ))}
                     </tbody>
