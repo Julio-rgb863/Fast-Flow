@@ -9,9 +9,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 export class StripeController {
   createCheckoutSession = async (req: AuthRequest, res: Response) => {
     try {
-      const { orderId } = req.body;
+      const { orderId, clientUrl: bodyClientUrl } = req.body;
       const userId = req.userId as string;
-      const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+      // Usa a URL enviada pelo frontend (mais confiável) ou fallback para env var
+      const clientUrl = bodyClientUrl || process.env.CLIENT_URL || 'http://localhost:5173';
 
       const order = await prisma.order.findUnique({
         where: { id: orderId },
@@ -51,6 +53,7 @@ export class StripeController {
       return res.status(500).json({ message: 'Erro ao criar sessão de pagamento', error: error.message });
     }
   };
+
 
   confirmPayment = async (req: AuthRequest, res: Response) => {
     try {

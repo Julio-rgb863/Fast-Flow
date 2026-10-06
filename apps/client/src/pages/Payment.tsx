@@ -17,7 +17,10 @@ export default function Payment() {
     setLoading(true);
     setError('');
     try {
-      const { data } = await api.post('/stripe/checkout', { orderId });
+      const { data } = await api.post('/stripe/checkout', {
+        orderId,
+        clientUrl: window.location.origin,
+      });
       window.location.href = data.url;
     } catch (err: any) {
       setError(err.response?.data?.message || t.payment.error);
