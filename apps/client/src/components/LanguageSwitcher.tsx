@@ -8,9 +8,9 @@ export default function LanguageSwitcher() {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        background: 'rgba(18, 17, 31, 0.9)',
-        border: '1px solid #2d1b69',
-        borderRadius: '999px',
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '6px',
         padding: '2px',
         gap: '2px',
       }}
@@ -18,45 +18,41 @@ export default function LanguageSwitcher() {
       <button
         onClick={() => setLanguage('pt')}
         style={{
-          background: language === 'pt' ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : 'transparent',
-          color: language === 'pt' ? '#fff' : '#9ca3af',
-          border: 'none',
-          borderRadius: '999px',
-          padding: '4px 8px',
-          fontSize: '0.75rem',
-          fontWeight: 'bold',
+          background: language === 'pt' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+          color: language === 'pt' ? '#f8fafc' : '#64748b',
+          border: language === 'pt' ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid transparent',
+          borderRadius: '4px',
+          padding: '3px 7px',
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          letterSpacing: '0.04em',
           cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          transition: 'all 0.2s ease',
+          transition: 'all 0.15s ease',
+          lineHeight: 1.2,
         }}
         title="Português"
       >
-        <span>🇧🇷</span>
-        <span>PT</span>
+        PT
       </button>
 
       <button
         onClick={() => setLanguage('en')}
         style={{
-          background: language === 'en' ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : 'transparent',
-          color: language === 'en' ? '#fff' : '#9ca3af',
-          border: 'none',
-          borderRadius: '999px',
-          padding: '4px 8px',
-          fontSize: '0.75rem',
-          fontWeight: 'bold',
+          background: language === 'en' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+          color: language === 'en' ? '#f8fafc' : '#64748b',
+          border: language === 'en' ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid transparent',
+          borderRadius: '4px',
+          padding: '3px 7px',
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          letterSpacing: '0.04em',
           cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          transition: 'all 0.2s ease',
+          transition: 'all 0.15s ease',
+          lineHeight: 1.2,
         }}
         title="English"
       >
-        <span>🇺🇸</span>
-        <span>EN</span>
+        EN
       </button>
     </div>
   );

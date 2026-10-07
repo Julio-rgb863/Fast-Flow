@@ -4,25 +4,39 @@ interface SpinnerProps {
   label?: string;
 }
 
-export default function Spinner({ size = 'md', color = '#a855f7', label }: SpinnerProps) {
-  const dimensions = size === 'sm' ? 18 : size === 'lg' ? 48 : 32;
-  const strokeWidth = size === 'sm' ? 2 : 3;
+export default function Spinner({ size = 'md', color = '#ffffff', label }: SpinnerProps) {
+  const dimensions = size === 'sm' ? 14 : size === 'lg' ? 36 : 22;
+  const strokeWidth = size === 'sm' ? 2 : 2.5;
 
   return (
-    <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-      <div
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+      <svg
+        width={dimensions}
+        height={dimensions}
+        viewBox="0 0 24 24"
         style={{
-          width: dimensions,
-          height: dimensions,
-          border: `${strokeWidth}px solid rgba(168, 85, 247, 0.2)`,
-          borderTopColor: color,
-          borderRadius: '50%',
-          animation: 'spin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite',
-          boxShadow: `0 0 16px ${color}33`,
+          animation: 'spin 0.65s linear infinite',
+          flexShrink: 0,
         }}
-      />
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="rgba(255, 255, 255, 0.15)"
+          strokeWidth={strokeWidth}
+          fill="none"
+        />
+        <path
+          d="M12 2a10 10 0 0 1 10 10"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          fill="none"
+        />
+      </svg>
       {label && (
-        <span style={{ fontSize: '0.85rem', color: '#9ca3af', fontWeight: 500, letterSpacing: '0.02em' }}>
+        <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>
           {label}
         </span>
       )}

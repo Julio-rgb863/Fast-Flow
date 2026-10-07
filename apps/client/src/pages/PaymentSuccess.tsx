@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { CheckIcon, ArrowRightIcon } from '../components/Icons';
 import api from '../services/api';
 
 export default function PaymentSuccess() {
@@ -19,52 +20,109 @@ export default function PaymentSuccess() {
 
     const timer = setTimeout(() => {
       navigate('/my-orders');
-    }, 5000);
+    }, 6000);
     return () => clearTimeout(timer);
   }, [navigate, orderId]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'radial-gradient(ellipse at top, #0a2e1a 0%, #0a0a0f 60%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* Language Switcher */}
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#07080b',
+        color: '#f8fafc',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem',
+        position: 'relative',
+      }}
+    >
+      <div className="bg-radial-subtle" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+      <div className="bg-grid-pattern" style={{ position: 'absolute', inset: 0, opacity: 0.25, pointerEvents: 'none' }} />
+
       <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 10 }}>
         <LanguageSwitcher />
       </div>
 
-      <div className="animate-blob" style={{ position: 'absolute', top: '-10%', left: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #059669 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.3 }} />
-      <div className="animate-blob delay-300" style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #34d399 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.2 }} />
+      <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <div
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              color: '#34d399',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '1.25rem',
+            }}
+          >
+            <CheckIcon size={28} />
+          </div>
 
-      <div className="animate-fadeInUp" style={{ textAlign: 'center', position: 'relative', zIndex: 1, padding: '2rem' }}>
-        <div className="animate-float" style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>✅</div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#34d399', marginBottom: '1rem' }}>
-          {t.paymentSuccess.title}
-        </h1>
-        <p style={{ color: '#9ca3af', fontSize: '1.1rem', marginBottom: '2rem' }}>
-          {t.paymentSuccess.subtitle}
-        </p>
-
-        <div className="glass" style={{ borderRadius: '16px', padding: '1.5rem', marginBottom: '2rem', border: '1px solid rgba(52,211,153,0.3)' }}>
-          <p style={{ color: '#34d399', marginBottom: '0.5rem' }}>{t.paymentSuccess.orderConfirmed}</p>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>{t.paymentSuccess.redirecting}</p>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.025em', color: '#f8fafc', margin: '0 0 0.5rem 0' }}>
+            {t.paymentSuccess.title}
+          </h1>
+          <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0, lineHeight: 1.5 }}>
+            {t.paymentSuccess.subtitle}
+          </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        <div
+          style={{
+            background: '#0d0f15',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            marginBottom: '1.75rem',
+            textAlign: 'left',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', fontSize: '0.85rem' }}>
+            <span style={{ color: '#64748b' }}>Status:</span>
+            <span style={{ color: '#34d399', fontWeight: 600 }}>Aprovado com sucesso</span>
+          </div>
+
+          {orderId && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+              <span style={{ color: '#64748b' }}>Código do Pedido:</span>
+              <span className="tabular-nums" style={{ fontFamily: 'monospace', color: '#94a3b8' }}>
+                #{orderId.slice(0, 8)}
+              </span>
+            </div>
+          )}
+
+          <div
+            style={{
+              marginTop: '1rem',
+              paddingTop: '0.85rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              fontSize: '0.78rem',
+              color: '#64748b',
+              textAlign: 'center',
+            }}
+          >
+            {t.paymentSuccess.redirecting}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
           <button
             onClick={() => navigate('/my-orders')}
-            style={{ padding: '0.875rem 2rem', background: 'linear-gradient(135deg, #059669, #34d399)', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer' }}
+            className="btn-primary"
+            style={{ flex: 1, padding: '0.75rem' }}
           >
-            {t.paymentSuccess.viewOrders}
+            <span>{t.paymentSuccess.viewOrders}</span>
+            <ArrowRightIcon size={14} />
           </button>
           <button
             onClick={() => navigate('/')}
-            style={{ padding: '0.875rem 2rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '12px', fontSize: '1rem', cursor: 'pointer' }}
+            className="btn-secondary"
+            style={{ padding: '0.75rem 1.25rem' }}
           >
             {t.paymentSuccess.backHome}
           </button>

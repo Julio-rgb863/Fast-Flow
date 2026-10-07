@@ -32,148 +32,142 @@ export default function Login() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'radial-gradient(ellipse at top, #2d0a6e 0%, #1a0533 40%, #0a0014 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      <style>{`
-        @media (max-width: 480px) {
-          .glass {
-            padding: 1.5rem 1.25rem !important;
-            border-radius: 16px !important;
-          }
-        }
-      `}</style>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#07080b',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        padding: '1.5rem',
+      }}
+    >
+      {/* Background Ambience */}
+      <div className="bg-radial-subtle" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+      <div className="bg-grid-pattern" style={{ position: 'absolute', inset: 0, opacity: 0.25, pointerEvents: 'none' }} />
 
-      {/* Language Switcher */}
+      {/* Language Switcher Top Right */}
       <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 10 }}>
         <LanguageSwitcher />
       </div>
 
-      {/* Floating Animated Ambient Blobs */}
-      <div className="animate-blob" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #7c3aed 0%, #4c1d95 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.6 }} />
-      <div className="animate-blob delay-300" style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #a855f7 0%, #6d28d9 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.5 }} />
-      <div className="animate-blob delay-500" style={{ position: 'absolute', bottom: '30%', right: '5%', width: '250px', height: '250px', background: 'radial-gradient(circle, #c084fc 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.4 }} />
-
-      <div className="animate-fadeInUp" style={{ width: '100%', maxWidth: '420px', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
-        <div className="glass" style={{
-          borderRadius: '24px',
-          padding: '2.5rem 2rem',
-          boxShadow: '0 8px 60px rgba(124,58,237,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
-        }}>
-          <div className="animate-fadeInUp delay-100" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <div
-              className="animate-float"
-              style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '0.75rem', cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Logo size={52} />
-            </div>
-            <div>
-              <span className="text-shimmer" style={{ fontSize: '1.15rem', fontWeight: '800', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                FastFlow
-              </span>
-            </div>
-            <p style={{ color: '#c084fc', marginTop: '0.5rem', fontSize: '1.2rem', fontWeight: '300' }}>
-              {t.auth.welcomeBack}
-            </p>
+      <div style={{ width: '100%', maxWidth: '380px', position: 'relative', zIndex: 1 }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <div
+            onClick={() => navigate('/')}
+            style={{ display: 'inline-flex', cursor: 'pointer', marginBottom: '1rem' }}
+          >
+            <Logo size={36} />
           </div>
+          <h1 style={{ fontSize: '1.35rem', fontWeight: 650, letterSpacing: '-0.025em', color: '#f8fafc', margin: '0 0 0.35rem 0' }}>
+            {t.auth.welcomeBack}
+          </h1>
+          <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>
+            Acesse seus ingressos e pedidos no FastFlow
+          </p>
+        </div>
 
+        {/* Card */}
+        <div
+          style={{
+            background: '#0d0f15',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '12px',
+            padding: '1.75rem',
+            boxShadow: '0 16px 40px -12px rgba(0, 0, 0, 0.7)',
+          }}
+        >
           {error && (
-            <div className="animate-bounceIn" style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '12px', padding: '0.85rem', marginBottom: '1.5rem', color: '#f87171', textAlign: 'center', fontSize: '0.875rem' }}>
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '8px',
+                padding: '0.65rem 0.85rem',
+                marginBottom: '1.25rem',
+                color: '#f87171',
+                fontSize: '0.82rem',
+                lineHeight: 1.4,
+              }}
+            >
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="animate-fadeInUp delay-200" style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.email}</label>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, color: '#94a3b8', marginBottom: '0.4rem' }}>
+                {t.auth.email}
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.auth.emailPlaceholder}
+                placeholder="seu@email.com"
                 required
-                className="input-animated"
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1rem',
-                  background: 'rgba(0,0,0,0.35)',
-                  border: '1px solid rgba(168,85,247,0.3)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box',
-                }}
+                className="saas-input"
               />
             </div>
 
-            <div className="animate-fadeInUp delay-300" style={{ marginBottom: '2rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', color: '#c4b5fd', fontSize: '0.875rem' }}>{t.auth.password}</label>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 500, color: '#94a3b8' }}>
+                  {t.auth.password}
+                </label>
+              </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={t.auth.passwordPlaceholder}
+                placeholder="••••••••"
                 required
-                className="input-animated"
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1rem',
-                  background: 'rgba(0,0,0,0.35)',
-                  border: '1px solid rgba(168,85,247,0.3)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box',
-                }}
+                className="saas-input"
               />
             </div>
 
-            <div className="animate-fadeInUp delay-400">
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-purple animate-pulse-glow"
-                style={{
-                  width: '100%',
-                  padding: '0.9rem',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '12px',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  letterSpacing: '0.05em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                {loading ? (
-                  <>
-                    <Spinner size="sm" color="#ffffff" />
-                    <span>{t.auth.loggingIn}</span>
-                  </>
-                ) : (
-                  <span>{t.auth.loginButton}</span>
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary"
+              style={{ width: '100%', padding: '0.7rem', marginTop: '0.5rem' }}
+            >
+              {loading ? <Spinner size="sm" color="#090a0f" /> : t.auth.loginButton}
+            </button>
           </form>
 
-          <p className="animate-fadeInUp delay-500" style={{ textAlign: 'center', marginTop: '1.75rem', color: '#9ca3af', fontSize: '0.9rem' }}>
+          <div
+            style={{
+              marginTop: '1.5rem',
+              paddingTop: '1.25rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              textAlign: 'center',
+              fontSize: '0.82rem',
+              color: '#64748b',
+            }}
+          >
             {t.auth.dontHaveAccount}{' '}
-            <Link to="/register" className="nav-link" style={{ color: '#c084fc', textDecoration: 'none', fontWeight: 'bold' }}>
+            <Link
+              to="/register"
+              style={{ color: '#818cf8', textDecoration: 'none', fontWeight: 550 }}
+            >
               {t.auth.signUpHere}
             </Link>
-          </p>
+          </div>
+        </div>
+
+        {/* Back Link */}
+        <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+          <span
+            onClick={() => navigate('/')}
+            style={{ fontSize: '0.8rem', color: '#64748b', cursor: 'pointer', transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#94a3b8')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
+          >
+            ← Voltar para a página inicial
+          </span>
         </div>
       </div>
     </div>

@@ -7,6 +7,12 @@ import Logo from '../components/Logo';
 import TicketModal, { type TicketOrder } from '../components/TicketModal';
 import ScrollReveal from '../components/ScrollReveal';
 import Spinner from '../components/Spinner';
+import {
+  CalendarIcon,
+  MapPinIcon,
+  TicketIcon,
+  QrCodeIcon,
+} from '../components/Icons';
 import api from '../services/api';
 
 interface Order extends TicketOrder {}
@@ -15,7 +21,6 @@ export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<TicketOrder | null>(null);
   const [loading, setLoading] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const { isAuthenticated, user, logout } = useAuth();
   const { t, language } = useLanguage();
@@ -49,207 +54,224 @@ export default function MyOrders() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff' }}>
-      <style>{`
-        @media (max-width: 768px) {
-          .orders-desktop-nav { display: none !important; }
-          .orders-mobile-btn { display: block !important; }
-          .orders-grid { grid-template-columns: 1fr !important; }
-          .orders-header { flex-direction: column !important; align-items: flex-start !important; gap: 0.5rem !important; }
-          .orders-badge { font-size: 0.7rem !important; }
-        }
-      `}</style>
-
-      {/* Navbar */}
-      <nav style={{
-        background: 'rgba(12,12,20,0.95)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid #2d1b69',
-        padding: '1rem 1.5rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-      }}>
-        <div onClick={() => navigate('/')} className="btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
-          <Logo size={32} />
-          <span style={{ fontSize: '1.2rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #c084fc, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            FastFlow
-          </span>
-        </div>
-
-        {/* Desktop */}
-        <div className="orders-desktop-nav" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <LanguageSwitcher />
-          <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>{t.nav.hello}, {user?.name}!</span>
-          <button onClick={() => navigate('/')} className="btn-outline" style={{ padding: '0.5rem 1rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-            {t.nav.home}
-          </button>
-          <button onClick={logout} className="btn-danger" style={{ padding: '0.5rem 1rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.875rem' }}>
-            {t.nav.logout}
-          </button>
-        </div>
-
-        {/* Mobile */}
-        <button
-          className="orders-mobile-btn"
-          onClick={() => setMenuOpen(!menuOpen)}
-          style={{ display: 'none', background: 'transparent', border: 'none', color: '#a855f7', fontSize: '1.5rem', cursor: 'pointer' }}
-        >
-          {menuOpen ? '✕' : '☰'}
-        </button>
-      </nav>
-
-      {/* Mobile Dropdown */}
-      {menuOpen && (
-        <div className="animate-fadeInDown" style={{
-          background: 'rgba(12,12,20,0.98)',
-          borderBottom: '1px solid #2d1b69',
-          padding: '1rem 1.5rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: '#a855f7', fontSize: '0.9rem' }}>{t.nav.hello}, {user?.name}!</span>
-            <LanguageSwitcher />
+    <div style={{ minHeight: '100vh', background: '#07080b', color: '#f8fafc' }}>
+      {/* Topbar */}
+      <header
+        style={{
+          background: 'rgba(7, 8, 11, 0.85)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+          padding: '0.85rem 1.5rem',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+        }}
+      >
+        <div style={{ maxWidth: '1160px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div
+            onClick={() => navigate('/')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+          >
+            <Logo size={28} />
+            <span style={{ fontSize: '1.05rem', fontWeight: 650, letterSpacing: '-0.02em', color: '#f8fafc' }}>
+              FastFlow
+            </span>
           </div>
-          <button onClick={() => { navigate('/'); setMenuOpen(false); }} className="btn-outline" style={{ padding: '0.75rem', background: 'transparent', color: '#a855f7', border: '1px solid #7c3aed', borderRadius: '8px', cursor: 'pointer' }}>
-            {t.nav.home}
-          </button>
-          <button onClick={() => { logout(); setMenuOpen(false); }} className="btn-danger" style={{ padding: '0.75rem', background: 'rgba(220,38,38,0.1)', color: '#f87171', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '8px', cursor: 'pointer' }}>
-            {t.nav.logout}
-          </button>
-        </div>
-      )}
 
-      <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '0 1rem' }}>
-        <ScrollReveal animation="up">
-          <h2 style={{ fontSize: 'clamp(1.35rem, 3.5vw, 1.85rem)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <LanguageSwitcher />
+            <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+              {user?.name}
+            </span>
+            <button
+              onClick={() => navigate('/')}
+              className="btn-secondary"
+              style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem' }}
+            >
+              Eventos
+            </button>
+            <button
+              onClick={logout}
+              className="btn-secondary"
+              style={{ padding: '0.45rem 0.75rem', fontSize: '0.82rem', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)' }}
+            >
+              {t.nav.logout}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <main style={{ maxWidth: '960px', margin: '2.5rem auto 5rem auto', padding: '0 1.5rem' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '1.65rem', fontWeight: 700, letterSpacing: '-0.025em', color: '#f8fafc', margin: '0 0 0.35rem 0' }}>
             {t.orders.title}
-          </h2>
-          <p style={{ color: '#6b7280', marginBottom: '2rem', fontSize: '0.95rem' }}>
-            {t.orders.subtitle}
+          </h1>
+          <p style={{ color: '#64748b', fontSize: '0.88rem', margin: 0 }}>
+            Gerencie seus ingressos digitais e histórico de compras
           </p>
-        </ScrollReveal>
+        </div>
 
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 2rem', gap: '1rem' }}>
-            <Spinner size="lg" color="#c084fc" label={t.orders.loading} />
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
+            <Spinner size="md" color="#ffffff" label="Carregando pedidos..." />
           </div>
         ) : orders.length === 0 ? (
-          <ScrollReveal animation="scale">
-            <div className="glass" style={{ borderRadius: '24px', padding: '3.5rem 1.5rem', textAlign: 'center' }}>
-              <div className="animate-float" style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🎭</div>
-              <p style={{ color: '#9ca3af', fontSize: '1.05rem', marginBottom: '1.75rem' }}>{t.orders.noOrders}</p>
-              <button onClick={() => navigate('/')} className="btn-purple" style={{ padding: '0.85rem 2.25rem', color: '#fff', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
-                {t.orders.exploreEvents}
-              </button>
+          <div
+            style={{
+              background: '#0d0f15',
+              border: '1px dashed rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '4rem 1.5rem',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ color: '#64748b', marginBottom: '0.75rem' }}>
+              <TicketIcon size={32} />
             </div>
-          </ScrollReveal>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.25rem' }}>
+              Nenhum ingresso encontrado
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem' }}>
+              Você ainda não realizou compras de ingressos na sua conta.
+            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="btn-primary"
+              style={{ padding: '0.65rem 1.35rem', fontSize: '0.85rem' }}
+            >
+              Explorar eventos disponíveis
+            </button>
+          </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {orders.map((order, i) => (
-              <ScrollReveal key={order.id} animation="up" delay={(i % 5) * 80}>
-                <div className="card-hover" style={{
-                  background: 'linear-gradient(135deg, #12121a, #1a1a2e)',
-                  border: `1px solid ${order.status === 'cancelled' ? 'rgba(220,38,38,0.25)' : 'rgba(124,58,237,0.3)'}`,
-                  borderRadius: '18px',
-                  overflow: 'hidden',
-                }}>
-                  <div className="orders-header" style={{
-                    background: order.status === 'cancelled' ? 'rgba(55,65,81,0.5)' : 'linear-gradient(135deg, #4c1d95, #7c3aed)',
-                    padding: '1.1rem 1.35rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                    <h4 style={{ color: '#fff', margin: 0, fontWeight: 'bold', fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)' }}>{order.event.name}</h4>
-                    <span className="orders-badge" style={{
-                      background: order.status === 'cancelled' ? 'rgba(220,38,38,0.2)' : 'rgba(52,211,153,0.2)',
-                      color: order.status === 'cancelled' ? '#f87171' : '#34d399',
-                      border: `1px solid ${order.status === 'cancelled' ? 'rgba(220,38,38,0.3)' : 'rgba(52,211,153,0.3)'}`,
-                      padding: '0.3rem 0.85rem',
-                      borderRadius: '999px',
-                      fontSize: '0.8rem',
-                      fontWeight: 'bold',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      {order.status === 'cancelled' ? t.orders.cancelled : t.orders.confirmed}
-                    </span>
-                  </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {orders.map((order, i) => {
+              const isCancelled = order.status === 'cancelled';
+              const eventDate = new Date(order.event.date);
 
-                  <div style={{ padding: '1.35rem' }}>
-                    <div className="orders-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                      <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.875rem' }}>📅 {new Date(order.event.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}</p>
-                      <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.875rem' }}>📍 {order.event.location}</p>
-                      <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.875rem' }}>🎟 {order.quantity} {t.orders.ticketsQty}</p>
-                      <p style={{ color: '#c084fc', margin: 0, fontWeight: 'bold', fontSize: '0.95rem' }}>💰 {language === 'en' ? '$' : 'R$'} {order.total.toFixed(2)}</p>
-                    </div>
-                    <p style={{ color: '#6b7280', fontSize: '0.8rem', marginBottom: order.status !== 'cancelled' ? '1.25rem' : '0' }}>
-                      {t.orders.orderedOn} {new Date(order.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
-                    </p>
-
-                    {order.status !== 'cancelled' && (
-                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                        <button
-                          onClick={() => setSelectedOrder(order)}
-                          className="btn-purple"
+              return (
+                <ScrollReveal key={order.id} animation="up" delay={(i % 6) * 50}>
+                  <div
+                    style={{
+                      background: '#0d0f15',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      padding: '1.35rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1rem',
+                      transition: 'border-color 0.2s',
+                    }}
+                  >
+                    {/* Header Row */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        <span
+                          className="tabular-nums"
                           style={{
-                            padding: '0.65rem 1.35rem',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '10px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            fontSize: '0.9rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
+                            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                            fontSize: '0.75rem',
+                            color: '#94a3b8',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '4px',
+                            border: '1px solid rgba(255, 255, 255, 0.07)',
                           }}
                         >
-                          🎟️ {t.orders.viewTicket}
-                        </button>
+                          #{order.id.slice(0, 8)}
+                        </span>
+                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                          Comprado em {new Date(order.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
+                        </span>
+                      </div>
+
+                      {isCancelled ? (
+                        <span className="status-pill" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                          Cancelado
+                        </span>
+                      ) : (
+                        <span className="status-pill status-pill-emerald">
+                          <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                          Confirmado
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Middle Info */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div>
+                        <h3 style={{ fontSize: '1.15rem', fontWeight: 650, color: '#f8fafc', margin: '0 0 0.5rem 0', letterSpacing: '-0.015em' }}>
+                          {order.event.name}
+                        </h3>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.82rem', color: '#94a3b8' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <CalendarIcon size={14} color="#64748b" />
+                            {eventDate.toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          </span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <MapPinIcon size={14} color="#64748b" />
+                            {order.event.location}
+                          </span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <TicketIcon size={14} color="#64748b" />
+                            {order.quantity} {t.orders.ticketsQty}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block', textTransform: 'uppercase' }}>Valor pago</span>
+                        <span className="tabular-nums" style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f8fafc' }}>
+                          {language === 'en' ? `$ ${order.total.toFixed(2)}` : `R$ ${order.total.toFixed(2)}`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Footer Actions */}
+                    {!isCancelled && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          paddingTop: '0.85rem',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                        }}
+                      >
                         <button
                           onClick={() => handleCancel(order.id)}
                           disabled={cancellingId === order.id}
-                          className="btn-danger"
+                          className="btn-secondary"
                           style={{
-                            padding: '0.65rem 1.25rem',
-                            background: 'rgba(220,38,38,0.1)',
+                            fontSize: '0.8rem',
+                            padding: '0.45rem 0.85rem',
                             color: '#f87171',
-                            border: '1px solid rgba(220,38,38,0.3)',
-                            borderRadius: '10px',
-                            cursor: cancellingId === order.id ? 'not-allowed' : 'pointer',
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.4rem',
+                            borderColor: 'rgba(239, 68, 68, 0.25)',
                           }}
                         >
-                          {cancellingId === order.id ? (
-                            <>
-                              <Spinner size="sm" color="#f87171" />
-                              <span>Cancelando...</span>
-                            </>
-                          ) : (
-                            t.orders.cancelOrder
-                          )}
+                          {cancellingId === order.id ? <Spinner size="sm" color="#f87171" /> : t.orders.cancelOrder}
+                        </button>
+
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="btn-primary"
+                          style={{ fontSize: '0.82rem', padding: '0.45rem 0.95rem' }}
+                        >
+                          <QrCodeIcon size={15} />
+                          <span>{t.orders.viewTicket}</span>
                         </button>
                       </div>
                     )}
                   </div>
-                </div>
-              </ScrollReveal>
-            ))}
+                </ScrollReveal>
+              );
+            })}
           </div>
         )}
-      </div>
+      </main>
 
-      {/* Modal do Ingresso Digital */}
+      {/* Ticket Modal */}
       {selectedOrder && (
         <TicketModal
           order={selectedOrder}

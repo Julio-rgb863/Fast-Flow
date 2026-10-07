@@ -1,39 +1,40 @@
 export default function SkeletonCard() {
   return (
     <div
-      className="skeleton-card"
       style={{
+        background: '#0d0f15',
+        border: '1px solid rgba(255, 255, 255, 0.07)',
+        borderRadius: '12px',
+        padding: '1.25rem',
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        background: 'linear-gradient(135deg, #12121a, #1a1a2e)',
-        border: '1px solid #2d1b69',
+        gap: '1rem',
       }}
     >
-      {/* Header banner shimmer */}
-      <div className="sk-header" style={{ height: '70px' }} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="skeleton-box" style={{ height: '18px', width: '35%', borderRadius: '4px' }} />
+        <div className="skeleton-box" style={{ height: '18px', width: '22%', borderRadius: '999px' }} />
+      </div>
 
-      {/* Body content shimmer */}
-      <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-        <div className="skeleton" style={{ height: '14px', width: '85%' }} />
-        <div className="skeleton" style={{ height: '14px', width: '60%' }} />
-        <div className="skeleton" style={{ height: '14px', width: '45%' }} />
+      <div className="skeleton-box" style={{ height: '22px', width: '80%', borderRadius: '4px', margin: '0.25rem 0' }} />
 
-        {/* Footer info & button */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '0.5rem',
-            paddingTop: '0.75rem',
-            borderTop: '1px solid rgba(124, 58, 237, 0.1)',
-          }}
-        >
-          <div className="skeleton" style={{ height: '22px', width: '70px', borderRadius: '6px' }} />
-          <div className="skeleton" style={{ height: '34px', width: '100px', borderRadius: '8px' }} />
-        </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="skeleton-box" style={{ height: '14px', width: '60%', borderRadius: '4px' }} />
+        <div className="skeleton-box" style={{ height: '14px', width: '50%', borderRadius: '4px' }} />
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingTop: '0.75rem',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+          marginTop: 'auto',
+        }}
+      >
+        <div className="skeleton-box" style={{ height: '22px', width: '25%', borderRadius: '4px' }} />
+        <div className="skeleton-box" style={{ height: '32px', width: '35%', borderRadius: '6px' }} />
       </div>
     </div>
   );

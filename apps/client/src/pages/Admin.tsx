@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
+import Spinner from '../components/Spinner';
+
 import api from '../services/api';
 
 interface DashboardStats {
@@ -194,27 +196,20 @@ export default function Admin() {
     }
   };
 
-
   if (!isAdmin && !loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <Logo size={48} />
-        <h1 style={{ marginTop: '1.5rem', color: '#ef4444', fontSize: '1.75rem' }}>{t.admin.restrictedAccess}</h1>
-        <p style={{ color: '#9ca3af', marginTop: '0.5rem', textAlign: 'center', maxWidth: '400px' }}>
+      <div style={{ minHeight: '100vh', background: '#07080b', color: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <Logo size={40} />
+        <h1 style={{ marginTop: '1.5rem', color: '#f87171', fontSize: '1.35rem', fontWeight: 650 }}>
+          {t.admin.restrictedAccess}
+        </h1>
+        <p style={{ color: '#64748b', marginTop: '0.5rem', textAlign: 'center', maxWidth: '400px', fontSize: '0.88rem' }}>
           {t.admin.restrictedNotice}
         </p>
         <button
           onClick={() => navigate('/')}
-          style={{
-            marginTop: '1.5rem',
-            padding: '0.75rem 1.5rem',
-            background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}
+          className="btn-secondary"
+          style={{ marginTop: '1.5rem' }}
         >
           {t.admin.backToHome}
         </button>
@@ -223,93 +218,99 @@ export default function Admin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#fff', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: '#07080b', color: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
       {/* Topbar */}
       <header
         style={{
-          background: 'rgba(12,12,20,0.95)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid #2d1b69',
-          padding: '1rem 2rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          background: 'rgba(7, 8, 11, 0.9)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+          padding: '0.85rem 1.5rem',
           position: 'sticky',
           top: 0,
           zIndex: 100,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <Logo size={32} />
-          <span style={{ fontSize: '1.25rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #c084fc, #7c3aed)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            FastFlow
-          </span>
-          <span style={{ background: '#7c3aed', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', padding: '0.2rem 0.6rem', borderRadius: '12px', marginLeft: '0.5rem' }}>
-            {t.admin.adminBadge}
-          </span>
-        </div>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
+            <Logo size={28} />
+            <span style={{ fontSize: '1.05rem', fontWeight: 650, letterSpacing: '-0.02em', color: '#f8fafc' }}>
+              FastFlow
+            </span>
+            <span className="status-pill status-pill-indigo" style={{ marginLeft: '0.35rem' }}>
+              Admin
+            </span>
+          </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <LanguageSwitcher />
-          <span style={{ color: '#9ca3af', fontSize: '0.875rem' }}>{t.admin.adminUserPrefix} <strong style={{ color: '#c084fc' }}>{user?.name}</strong></span>
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: '#1a103c',
-              border: '1px solid #4c1d95',
-              color: '#d8b4fe',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              transition: 'all 0.2s',
-            }}
-          >
-            {t.admin.backToSite}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <LanguageSwitcher />
+            <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+              {user?.name}
+            </span>
+            <button
+              onClick={() => navigate('/')}
+              className="btn-secondary"
+              style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem' }}
+            >
+              {t.admin.backToSite}
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '2rem 1.5rem', flex: 1 }}>
+      <div style={{ maxWidth: '1240px', margin: '0 auto', width: '100%', padding: '2rem 1.5rem', flex: 1 }}>
         {/* Banner de Feedback */}
         {message && (
           <div
             style={{
-              padding: '0.875rem 1.25rem',
+              padding: '0.75rem 1.25rem',
               borderRadius: '8px',
               marginBottom: '1.5rem',
-              background: message.type === 'success' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-              border: `1px solid ${message.type === 'success' ? '#22c55e' : '#ef4444'}`,
-              color: message.type === 'success' ? '#4ade80' : '#f87171',
+              background: message.type === 'success' ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+              border: `1px solid ${message.type === 'success' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+              color: message.type === 'success' ? '#34d399' : '#f87171',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              fontSize: '0.85rem',
             }}
           >
             <span>{message.text}</span>
             <button
               onClick={() => setMessage(null)}
-              style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1.1rem' }}
+              style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer', padding: '0.2rem' }}
             >
               ✕
             </button>
           </div>
         )}
 
-        {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid #2d1b69', paddingBottom: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        {/* Tab Navigation (Segmented pill bar) */}
+        <div
+          style={{
+            display: 'inline-flex',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '8px',
+            padding: '3px',
+            gap: '3px',
+            marginBottom: '2rem',
+            flexWrap: 'wrap',
+          }}
+        >
           <button
             onClick={() => setActiveTab('dashboard')}
             style={{
-              padding: '0.65rem 1.25rem',
-              borderRadius: '8px',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : '#16132b',
-              color: activeTab === 'dashboard' ? '#fff' : '#9ca3af',
-              transition: '0.2s',
+              fontWeight: 550,
+              fontSize: '0.85rem',
+              background: activeTab === 'dashboard' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+              color: activeTab === 'dashboard' ? '#f8fafc' : '#64748b',
+              transition: 'all 0.15s ease',
             }}
           >
             {t.admin.overview}
@@ -317,14 +318,15 @@ export default function Admin() {
           <button
             onClick={() => setActiveTab('events')}
             style={{
-              padding: '0.65rem 1.25rem',
-              borderRadius: '8px',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              background: activeTab === 'events' ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : '#16132b',
-              color: activeTab === 'events' ? '#fff' : '#9ca3af',
-              transition: '0.2s',
+              fontWeight: 550,
+              fontSize: '0.85rem',
+              background: activeTab === 'events' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+              color: activeTab === 'events' ? '#f8fafc' : '#64748b',
+              transition: 'all 0.15s ease',
             }}
           >
             {t.admin.manageEvents} ({events.length})
@@ -332,14 +334,15 @@ export default function Admin() {
           <button
             onClick={() => setActiveTab('orders')}
             style={{
-              padding: '0.65rem 1.25rem',
-              borderRadius: '8px',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              background: activeTab === 'orders' ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : '#16132b',
-              color: activeTab === 'orders' ? '#fff' : '#9ca3af',
-              transition: '0.2s',
+              fontWeight: 550,
+              fontSize: '0.85rem',
+              background: activeTab === 'orders' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+              color: activeTab === 'orders' ? '#f8fafc' : '#64748b',
+              transition: 'all 0.15s ease',
             }}
           >
             {t.admin.allOrders} ({orders.length})
@@ -347,14 +350,15 @@ export default function Admin() {
           <button
             onClick={() => setActiveTab('users')}
             style={{
-              padding: '0.65rem 1.25rem',
-              borderRadius: '8px',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
               border: 'none',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              background: activeTab === 'users' ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : '#16132b',
-              color: activeTab === 'users' ? '#fff' : '#9ca3af',
-              transition: '0.2s',
+              fontWeight: 550,
+              fontSize: '0.85rem',
+              background: activeTab === 'users' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+              color: activeTab === 'users' ? '#f8fafc' : '#64748b',
+              transition: 'all 0.15s ease',
             }}
           >
             {t.admin.users} ({users.length})
@@ -362,71 +366,64 @@ export default function Admin() {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '4rem', color: '#9ca3af' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⏳</div>
-            {t.admin.loadingData}
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
+            <Spinner size="md" color="#ffffff" label={t.admin.loadingData} />
           </div>
         ) : (
           <>
             {/* TAB DASHBOARD */}
             {activeTab === 'dashboard' && (
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-                  <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalUsers}</span>
-                    <h2 style={{ fontSize: '2rem', color: '#c084fc', marginTop: '0.5rem' }}>{stats?.totalUsers ?? users.length}</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+                  <div style={{ background: '#0d0f15', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '1.25rem' }}>
+                    <span style={{ color: '#64748b', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t.admin.totalUsers}</span>
+                    <h2 className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f8fafc', marginTop: '0.5rem', margin: 0 }}>
+                      {stats?.totalUsers ?? users.length}
+                    </h2>
                   </div>
-                  <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalEvents}</span>
-                    <h2 style={{ fontSize: '2rem', color: '#38bdf8', marginTop: '0.5rem' }}>{stats?.totalEvents ?? events.length}</h2>
+
+                  <div style={{ background: '#0d0f15', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '1.25rem' }}>
+                    <span style={{ color: '#64748b', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t.admin.totalEvents}</span>
+                    <h2 className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f8fafc', marginTop: '0.5rem', margin: 0 }}>
+                      {stats?.totalEvents ?? events.length}
+                    </h2>
                   </div>
-                  <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalOrders}</span>
-                    <h2 style={{ fontSize: '2rem', color: '#facc15', marginTop: '0.5rem' }}>{stats?.totalOrders ?? orders.length}</h2>
+
+                  <div style={{ background: '#0d0f15', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '1.25rem' }}>
+                    <span style={{ color: '#64748b', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t.admin.totalOrders}</span>
+                    <h2 className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f8fafc', marginTop: '0.5rem', margin: 0 }}>
+                      {stats?.totalOrders ?? orders.length}
+                    </h2>
                   </div>
-                  <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.ticketsSold}</span>
-                    <h2 style={{ fontSize: '2rem', color: '#4ade80', marginTop: '0.5rem' }}>{stats?.totalTicketsSold ?? 0}</h2>
+
+                  <div style={{ background: '#0d0f15', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '1.25rem' }}>
+                    <span style={{ color: '#64748b', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t.admin.ticketsSold}</span>
+                    <h2 className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f8fafc', marginTop: '0.5rem', margin: 0 }}>
+                      {stats?.totalTicketsSold ?? 0}
+                    </h2>
                   </div>
-                  <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem' }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{t.admin.totalRevenue}</span>
-                    <h2 style={{ fontSize: '2rem', color: '#a855f7', marginTop: '0.5rem' }}>
+
+                  <div style={{ background: '#0d0f15', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '1.25rem' }}>
+                    <span style={{ color: '#64748b', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t.admin.totalRevenue}</span>
+                    <h2 className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f8fafc', marginTop: '0.5rem', margin: 0 }}>
                       {language === 'en' ? '$' : 'R$'} {(stats?.totalRevenue ?? 0).toLocaleString(language === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2 })}
                     </h2>
                   </div>
                 </div>
 
                 {/* Ações Rápidas */}
-                <div style={{ background: '#12111f', border: '1px solid #2d1b69', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#e2e8f0' }}>{t.admin.quickActions}</h3>
-                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ background: '#0d0f15', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
+                  <h3 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '1rem', color: '#f8fafc' }}>{t.admin.quickActions}</h3>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <button
                       onClick={() => { setActiveTab('events'); setShowModal(true); }}
-                      style={{
-                        padding: '0.75rem 1.25rem',
-                        background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        fontSize: '0.9rem',
-                      }}
+                      className="btn-primary"
                     >
-                      {t.admin.newEventBtn}
+                      + {t.admin.newEventBtn}
                     </button>
                     <button
                       onClick={() => setActiveTab('orders')}
-                      style={{
-                        padding: '0.75rem 1.25rem',
-                        background: '#1e1b4b',
-                        color: '#c084fc',
-                        border: '1px solid #4c1d95',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        fontSize: '0.9rem',
-                      }}
+                      className="btn-secondary"
                     >
                       {t.admin.viewAllOrdersBtn}
                     </button>
@@ -439,59 +436,50 @@ export default function Admin() {
             {activeTab === 'events' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0' }}>{t.admin.eventsListTitle}</h2>
+                  <h2 style={{ fontSize: '1.2rem', fontWeight: 650, color: '#f8fafc', margin: 0 }}>{t.admin.eventsListTitle}</h2>
                   <button
                     onClick={() => setShowModal(true)}
-                    style={{
-                      padding: '0.65rem 1.25rem',
-                      background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontWeight: 'bold',
-                      fontSize: '0.875rem',
-                    }}
+                    className="btn-primary"
                   >
-                    {t.admin.newEventModalBtn}
+                    + {t.admin.newEventModalBtn}
                   </button>
                 </div>
 
-                <div style={{ overflowX: 'auto', background: '#12111f', borderRadius: '12px', border: '1px solid #2d1b69' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                <div style={{ overflowX: 'auto', background: '#0d0f15', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #2d1b69', color: '#9ca3af' }}>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableName}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableDate}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableLocation}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tablePrice}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableTickets}</th>
-                        <th style={{ padding: '1rem', textAlign: 'right' }}>{t.admin.tableActions}</th>
+                      <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#64748b' }}>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableName}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableDate}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableLocation}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tablePrice}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableTickets}</th>
+                        <th style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600 }}>{t.admin.tableActions}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {events.map((ev) => (
-                        <tr key={ev.id} style={{ borderBottom: '1px solid #1a182d' }}>
-                          <td style={{ padding: '1rem', fontWeight: 'bold' }}>{ev.name}</td>
-                          <td style={{ padding: '1rem', color: '#9ca3af' }}>
+                        <tr key={ev.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                          <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: '#f8fafc' }}>{ev.name}</td>
+                          <td style={{ padding: '0.85rem 1rem', color: '#94a3b8' }}>
                             {new Date(ev.date).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           </td>
-                          <td style={{ padding: '1rem', color: '#9ca3af' }}>{ev.location}</td>
-                          <td style={{ padding: '1rem', color: '#4ade80' }}>{language === 'en' ? '$' : 'R$'} {ev.price.toFixed(2)}</td>
-                          <td style={{ padding: '1rem' }}>
-                            <span style={{ color: '#c084fc' }}>{ev.soldTickets}</span> / {ev.totalTickets}
+                          <td style={{ padding: '0.85rem 1rem', color: '#94a3b8' }}>{ev.location}</td>
+                          <td className="tabular-nums" style={{ padding: '0.85rem 1rem', color: '#f8fafc', fontWeight: 600 }}>
+                            {language === 'en' ? '$' : 'R$'} {ev.price.toFixed(2)}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'right' }}>
+                          <td className="tabular-nums" style={{ padding: '0.85rem 1rem', color: '#94a3b8' }}>
+                            <span style={{ color: '#f8fafc', fontWeight: 600 }}>{ev.soldTickets}</span> / {ev.totalTickets}
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
                             <button
                               onClick={() => handleDeleteEvent(ev.id, ev.name)}
+                              className="btn-secondary"
                               style={{
-                                padding: '0.4rem 0.8rem',
-                                background: '#3b1219',
-                                border: '1px solid #dc2626',
+                                padding: '0.35rem 0.65rem',
                                 color: '#f87171',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: '0.8rem',
+                                borderColor: 'rgba(239, 68, 68, 0.25)',
+                                fontSize: '0.75rem',
                               }}
                             >
                               {t.admin.deleteBtn}
@@ -508,58 +496,45 @@ export default function Admin() {
             {/* TAB PEDIDOS */}
             {activeTab === 'orders' && (
               <div>
-                <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '1.5rem' }}>{t.admin.allOrders}</h2>
-                <div style={{ overflowX: 'auto', background: '#12111f', borderRadius: '12px', border: '1px solid #2d1b69' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: 650, color: '#f8fafc', marginBottom: '1.5rem' }}>{t.admin.allOrders}</h2>
+                <div style={{ overflowX: 'auto', background: '#0d0f15', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #2d1b69', color: '#9ca3af' }}>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableOrderId}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableCustomer}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableEvent}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableQty}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableTotal}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableStatus}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableDate}</th>
+                      <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#64748b' }}>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableOrderId}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableCustomer}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableEvent}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableQty}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableTotal}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableStatus}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableDate}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {orders.map((ord) => (
-                        <tr key={ord.id} style={{ borderBottom: '1px solid #1a182d' }}>
-                          <td style={{ padding: '1rem', fontFamily: 'monospace', color: '#9ca3af', fontSize: '0.8rem' }}>
-                            {ord.id.slice(0, 8)}...
+                        <tr key={ord.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                          <td style={{ padding: '0.85rem 1rem', fontFamily: 'monospace', color: '#64748b', fontSize: '0.78rem' }}>
+                            #{ord.id.slice(0, 8)}
                           </td>
-                          <td style={{ padding: '1rem' }}>
-                            <div style={{ fontWeight: 'bold' }}>{ord.user?.name || t.admin.anonymous}</div>
-                            <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{ord.user?.email}</div>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <div style={{ fontWeight: 600, color: '#f8fafc' }}>{ord.user?.name || t.admin.anonymous}</div>
+                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{ord.user?.email}</div>
                           </td>
-                          <td style={{ padding: '1rem', color: '#d8b4fe' }}>{ord.event?.name}</td>
-                          <td style={{ padding: '1rem' }}>{ord.quantity}</td>
-                          <td style={{ padding: '1rem', color: '#4ade80', fontWeight: 'bold' }}>{language === 'en' ? '$' : 'R$'} {ord.total.toFixed(2)}</td>
-                          <td style={{ padding: '1rem' }}>
-                            <span
-                              style={{
-                                padding: '0.2rem 0.6rem',
-                                borderRadius: '12px',
-                                fontSize: '0.75rem',
-                                fontWeight: 'bold',
-                                background:
-                                  ord.status === 'paid' || ord.status === 'approved'
-                                    ? 'rgba(34,197,94,0.2)'
-                                    : ord.status === 'cancelled'
-                                    ? 'rgba(239,68,68,0.2)'
-                                    : 'rgba(234,179,8,0.2)',
-                                color:
-                                  ord.status === 'paid' || ord.status === 'approved'
-                                    ? '#4ade80'
-                                    : ord.status === 'cancelled'
-                                    ? '#f87171'
-                                    : '#facc15',
-                              }}
-                            >
-                              {ord.status}
-                            </span>
+                          <td style={{ padding: '0.85rem 1rem', color: '#94a3b8' }}>{ord.event?.name}</td>
+                          <td style={{ padding: '0.85rem 1rem', color: '#f8fafc' }}>{ord.quantity}</td>
+                          <td className="tabular-nums" style={{ padding: '0.85rem 1rem', color: '#f8fafc', fontWeight: 600 }}>
+                            {language === 'en' ? '$' : 'R$'} {ord.total.toFixed(2)}
                           </td>
-                          <td style={{ padding: '1rem', color: '#9ca3af' }}>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            {ord.status === 'paid' || ord.status === 'approved' ? (
+                              <span className="status-pill status-pill-emerald">Confirmado</span>
+                            ) : ord.status === 'cancelled' ? (
+                              <span className="status-pill" style={{ background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>Cancelado</span>
+                            ) : (
+                              <span className="status-pill status-pill-amber">{ord.status}</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '0.85rem 1rem', color: '#64748b' }}>
                             {new Date(ord.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
                           </td>
                         </tr>
@@ -573,81 +548,62 @@ export default function Admin() {
             {/* TAB USUÁRIOS */}
             {activeTab === 'users' && (
               <div>
-                <h2 style={{ fontSize: '1.4rem', color: '#e2e8f0', marginBottom: '1.5rem' }}>{t.admin.users}</h2>
-                <div style={{ overflowX: 'auto', background: '#12111f', borderRadius: '12px', border: '1px solid #2d1b69' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: 650, color: '#f8fafc', marginBottom: '1.5rem' }}>{t.admin.users}</h2>
+                <div style={{ overflowX: 'auto', background: '#0d0f15', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #2d1b69', color: '#9ca3af' }}>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableName}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableEmail}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableRole}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableOrdersCount}</th>
-                        <th style={{ padding: '1rem' }}>{t.admin.tableCreatedAt}</th>
-                        <th style={{ padding: '1rem', textAlign: 'right' }}>{t.admin.tableActions}</th>
+                      <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#64748b' }}>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableName}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableEmail}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableRole}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableOrdersCount}</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>{t.admin.tableCreatedAt}</th>
+                        <th style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600 }}>{t.admin.tableActions}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {users.map((u) => (
-                        <tr key={u.id} style={{ borderBottom: '1px solid #1a182d' }}>
-                          <td style={{ padding: '1rem', fontWeight: 'bold' }}>{u.name}</td>
-                          <td style={{ padding: '1rem', color: '#9ca3af' }}>{u.email}</td>
-                          <td style={{ padding: '1rem' }}>
-                            <span
-                              style={{
-                                padding: '0.2rem 0.6rem',
-                                borderRadius: '12px',
-                                fontSize: '0.75rem',
-                                fontWeight: 'bold',
-                                background: u.role === 'admin' ? 'rgba(168,85,247,0.2)' : 'rgba(107,114,128,0.2)',
-                                color: u.role === 'admin' ? '#c084fc' : '#9ca3af',
-                              }}
-                            >
+                        <tr key={u.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                          <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: '#f8fafc' }}>{u.name}</td>
+                          <td style={{ padding: '0.85rem 1rem', color: '#94a3b8' }}>{u.email}</td>
+                          <td style={{ padding: '0.85rem 1rem' }}>
+                            <span className={u.role === 'admin' ? 'status-pill status-pill-indigo' : 'status-pill'} style={u.role !== 'admin' ? { background: 'rgba(255,255,255,0.05)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)' } : {}}>
                               {u.role.toUpperCase()}
                             </span>
                           </td>
-                          <td style={{ padding: '1rem' }}>{u._count?.orders ?? 0}</td>
-                          <td style={{ padding: '1rem', color: '#9ca3af' }}>
+                          <td className="tabular-nums" style={{ padding: '0.85rem 1rem', color: '#94a3b8' }}>{u._count?.orders ?? 0}</td>
+                          <td style={{ padding: '0.85rem 1rem', color: '#64748b' }}>
                             {new Date(u.createdAt).toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR')}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'right' }}>
+                          <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
                             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                               {u.role !== 'admin' ? (
                                 <button
                                   onClick={() => handlePromoteUser(u.id, u.name)}
-                                  style={{
-                                    padding: '0.4rem 0.8rem',
-                                    background: '#1e1b4b',
-                                    border: '1px solid #7c3aed',
-                                    color: '#c084fc',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.8rem',
-                                  }}
+                                  className="btn-secondary"
+                                  style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
                                 >
                                   {t.admin.promoteToAdminBtn}
                                 </button>
                               ) : (
-                                <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{t.admin.administratorRole}</span>
+                                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Admin</span>
                               )}
                               {u.role !== 'admin' && u.id !== user?.id && (
                                 <button
                                   onClick={() => handleDeleteUser(u.id, u.name)}
+                                  className="btn-secondary"
                                   style={{
-                                    padding: '0.4rem 0.8rem',
-                                    background: '#3b1219',
-                                    border: '1px solid #dc2626',
+                                    padding: '0.35rem 0.65rem',
                                     color: '#f87171',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.8rem',
+                                    borderColor: 'rgba(239, 68, 68, 0.25)',
+                                    fontSize: '0.75rem',
                                   }}
                                 >
-                                  🗑️ Excluir
+                                  Excluir
                                 </button>
                               )}
                             </div>
                           </td>
-
                         </tr>
                       ))}
                     </tbody>
@@ -666,7 +622,7 @@ export default function Admin() {
             position: 'fixed',
             inset: 0,
             background: 'rgba(0,0,0,0.7)',
-            backdropFilter: 'blur(4px)',
+            backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -676,20 +632,20 @@ export default function Admin() {
         >
           <div
             style={{
-              background: '#12111f',
-              border: '1px solid #2d1b69',
-              borderRadius: '16px',
-              padding: '2rem',
-              maxWidth: '500px',
+              background: '#0d0f15',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '14px',
+              padding: '1.75rem',
+              maxWidth: '480px',
               width: '100%',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+              boxShadow: '0 24px 60px -15px rgba(0, 0, 0, 0.8)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.25rem', color: '#fff' }}>{t.admin.createEventTitle}</h3>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 650, color: '#f8fafc', margin: 0 }}>{t.admin.createEventTitle}</h3>
               <button
                 onClick={() => setShowModal(false)}
-                style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: '1.25rem' }}
+                style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', padding: '0.2rem' }}
               >
                 ✕
               </button>
@@ -697,103 +653,68 @@ export default function Admin() {
 
             <form onSubmit={handleCreateEvent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.eventNameLabel}</label>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 500 }}>{t.admin.eventNameLabel}</label>
                 <input
                   type="text"
                   required
                   value={newEvent.name}
                   onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    background: '#0a0a0f',
-                    border: '1px solid #2d1b69',
-                    borderRadius: '8px',
-                    color: '#fff',
-                  }}
+                  className="saas-input"
                   placeholder={t.admin.eventNamePlaceholder}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.descriptionLabel}</label>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 500 }}>{t.admin.descriptionLabel}</label>
                 <textarea
                   required
                   rows={3}
                   value={newEvent.description}
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    background: '#0a0a0f',
-                    border: '1px solid #2d1b69',
-                    borderRadius: '8px',
-                    color: '#fff',
-                    resize: 'vertical',
-                  }}
+                  className="saas-input"
+                  style={{ resize: 'vertical' }}
                   placeholder={t.admin.descriptionPlaceholder}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.dateTimeLabel}</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 500 }}>{t.admin.dateTimeLabel}</label>
                   <input
                     type="datetime-local"
                     required
                     value={newEvent.date}
                     onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      background: '#0a0a0f',
-                      border: '1px solid #2d1b69',
-                      borderRadius: '8px',
-                      color: '#fff',
-                    }}
+                    className="saas-input"
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.locationLabel}</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 500 }}>{t.admin.locationLabel}</label>
                   <input
                     type="text"
                     required
                     value={newEvent.location}
                     onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      background: '#0a0a0f',
-                      border: '1px solid #2d1b69',
-                      borderRadius: '8px',
-                      color: '#fff',
-                    }}
+                    className="saas-input"
                     placeholder={t.admin.locationPlaceholder}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.totalTicketsLabel}</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 500 }}>{t.admin.totalTicketsLabel}</label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={newEvent.totalTickets}
                     onChange={(e) => setNewEvent({ ...newEvent, totalTickets: Number(e.target.value) })}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      background: '#0a0a0f',
-                      border: '1px solid #2d1b69',
-                      borderRadius: '8px',
-                      color: '#fff',
-                    }}
+                    className="saas-input"
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#9ca3af', marginBottom: '0.35rem' }}>{t.admin.unitPriceLabel}</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 500 }}>{t.admin.unitPriceLabel}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -801,14 +722,7 @@ export default function Admin() {
                     required
                     value={newEvent.price}
                     onChange={(e) => setNewEvent({ ...newEvent, price: Number(e.target.value) })}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      background: '#0a0a0f',
-                      border: '1px solid #2d1b69',
-                      borderRadius: '8px',
-                      color: '#fff',
-                    }}
+                    className="saas-input"
                   />
                 </div>
               </div>
@@ -817,30 +731,14 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  style={{
-                    padding: '0.65rem 1.25rem',
-                    background: '#1e1b4b',
-                    border: '1px solid #3b2075',
-                    color: '#9ca3af',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                  }}
+                  className="btn-secondary"
                 >
                   {t.admin.cancelBtn}
                 </button>
                 <button
                   type="submit"
                   disabled={submittingEvent}
-                  style={{
-                    padding: '0.65rem 1.25rem',
-                    background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-                    border: 'none',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    fontWeight: 'bold',
-                    cursor: submittingEvent ? 'not-allowed' : 'pointer',
-                    opacity: submittingEvent ? 0.7 : 1,
-                  }}
+                  className="btn-primary"
                 >
                   {submittingEvent ? t.admin.savingBtn : t.admin.saveEventBtn}
                 </button>
