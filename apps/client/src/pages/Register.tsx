@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
+import Spinner from '../components/Spinner';
 import api from '../services/api';
 
 export default function Register() {
@@ -52,6 +53,7 @@ export default function Register() {
         <LanguageSwitcher />
       </div>
 
+      {/* Ambient background glow blobs */}
       <div className="animate-blob" style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, #7c3aed 0%, #4c1d95 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.6 }} />
       <div className="animate-blob delay-300" style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, #a855f7 0%, #6d28d9 40%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', opacity: 0.5 }} />
       <div className="animate-blob delay-500" style={{ position: 'absolute', top: '40%', left: '5%', width: '250px', height: '250px', background: 'radial-gradient(circle, #c084fc 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)', opacity: 0.4 }} />
@@ -63,19 +65,25 @@ export default function Register() {
           boxShadow: '0 8px 60px rgba(124,58,237,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
         }}>
           <div className="animate-fadeInUp delay-100" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <div className="animate-float" style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+            <div
+              className="animate-float"
+              style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '0.75rem', cursor: 'pointer' }}
+              onClick={() => navigate('/')}
+            >
               <Logo size={52} />
             </div>
-            <span className="text-shimmer" style={{ fontSize: '1.1rem', fontWeight: '700', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-              FastFlow
-            </span>
+            <div>
+              <span className="text-shimmer" style={{ fontSize: '1.15rem', fontWeight: '800', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                FastFlow
+              </span>
+            </div>
             <p style={{ color: '#c084fc', marginTop: '0.5rem', fontSize: '1.2rem', fontWeight: '300' }}>
               {t.auth.createAccount}
             </p>
           </div>
 
           {error && (
-            <div className="animate-fadeIn" style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '10px', padding: '0.75rem', marginBottom: '1.5rem', color: '#f87171', textAlign: 'center', fontSize: '0.875rem' }}>
+            <div className="animate-bounceIn" style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '12px', padding: '0.85rem', marginBottom: '1.5rem', color: '#f87171', textAlign: 'center', fontSize: '0.875rem' }}>
               {error}
             </div>
           )}
@@ -89,9 +97,17 @@ export default function Register() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.auth.namePlaceholder}
                 required
-                style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
-                onFocus={e => e.target.style.borderColor = '#a855f7'}
-                onBlur={e => e.target.style.borderColor = 'rgba(168,85,247,0.3)'}
+                className="input-animated"
+                style={{
+                  width: '100%',
+                  padding: '0.875rem 1rem',
+                  background: 'rgba(0,0,0,0.35)',
+                  border: '1px solid rgba(168,85,247,0.3)',
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontSize: '1rem',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
 
@@ -103,9 +119,17 @@ export default function Register() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t.auth.emailPlaceholder}
                 required
-                style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
-                onFocus={e => e.target.style.borderColor = '#a855f7'}
-                onBlur={e => e.target.style.borderColor = 'rgba(168,85,247,0.3)'}
+                className="input-animated"
+                style={{
+                  width: '100%',
+                  padding: '0.875rem 1rem',
+                  background: 'rgba(0,0,0,0.35)',
+                  border: '1px solid rgba(168,85,247,0.3)',
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontSize: '1rem',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
 
@@ -117,9 +141,17 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t.auth.passwordRegisterPlaceholder}
                 required
-                style={{ width: '100%', padding: '0.875rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.3s' }}
-                onFocus={e => e.target.style.borderColor = '#a855f7'}
-                onBlur={e => e.target.style.borderColor = 'rgba(168,85,247,0.3)'}
+                className="input-animated"
+                style={{
+                  width: '100%',
+                  padding: '0.875rem 1rem',
+                  background: 'rgba(0,0,0,0.35)',
+                  border: '1px solid rgba(168,85,247,0.3)',
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontSize: '1rem',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
 
@@ -128,16 +160,37 @@ export default function Register() {
                 type="submit"
                 disabled={loading}
                 className="btn-purple animate-pulse-glow"
-                style={{ width: '100%', padding: '0.875rem', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.05em' }}
+                style={{
+                  width: '100%',
+                  padding: '0.9rem',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  letterSpacing: '0.05em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                }}
               >
-                {loading ? t.auth.registering : t.auth.registerButton}
+                {loading ? (
+                  <>
+                    <Spinner size="sm" color="#ffffff" />
+                    <span>{t.auth.registering}</span>
+                  </>
+                ) : (
+                  <span>{t.auth.registerButton}</span>
+                )}
               </button>
             </div>
           </form>
 
-          <p className="animate-fadeInUp delay-500" style={{ textAlign: 'center', marginTop: '1.5rem', color: '#9ca3af', fontSize: '0.9rem' }}>
+          <p className="animate-fadeInUp delay-500" style={{ textAlign: 'center', marginTop: '1.75rem', color: '#9ca3af', fontSize: '0.9rem' }}>
             {t.auth.alreadyHaveAccount}{' '}
-            <Link to="/login" style={{ color: '#a855f7', textDecoration: 'none', fontWeight: 'bold' }}>
+            <Link to="/login" className="nav-link" style={{ color: '#c084fc', textDecoration: 'none', fontWeight: 'bold' }}>
               {t.auth.loginHere}
             </Link>
           </p>
