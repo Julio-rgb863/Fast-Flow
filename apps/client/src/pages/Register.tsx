@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import Logo from '../components/Logo';
 import Spinner from '../components/Spinner';
+import { GoogleIcon, XIcon, FacebookIcon } from '../components/Icons';
 import api from '../services/api';
 
 export default function Register() {
@@ -12,6 +13,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [socialNotice, setSocialNotice] = useState('');
   const { t } = useLanguage();
   const navigate = useNavigate();
 
@@ -27,6 +29,13 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleSocialLogin(provider: string) {
+    setSocialNotice(`Cadastro via ${provider} em desenvolvimento.`);
+    setTimeout(() => {
+      setSocialNotice('');
+    }, 3500);
   }
 
   return (
@@ -51,7 +60,7 @@ export default function Register() {
         <LanguageSwitcher />
       </div>
 
-      <div style={{ width: '100%', maxWidth: '380px', position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%', maxWidth: '390px', position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
           <div
@@ -73,7 +82,7 @@ export default function Register() {
           style={{
             background: '#0d0f15',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
+            borderRadius: '14px',
             padding: '1.75rem',
             boxShadow: '0 16px 40px -12px rgba(0, 0, 0, 0.7)',
           }}
@@ -94,6 +103,89 @@ export default function Register() {
               {error}
             </div>
           )}
+
+          {socialNotice && (
+            <div
+              style={{
+                background: 'rgba(99, 102, 241, 0.1)',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
+                borderRadius: '8px',
+                padding: '0.65rem 0.85rem',
+                marginBottom: '1.25rem',
+                color: '#a5b4fc',
+                fontSize: '0.82rem',
+                textAlign: 'center',
+              }}
+            >
+              {socialNotice}
+            </div>
+          )}
+
+          {/* Social Sign up: Google, X, Facebook */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: '1.25rem' }}>
+            <button
+              type="button"
+              onClick={() => handleSocialLogin('Google')}
+              className="btn-secondary"
+              style={{
+                padding: '0.6rem 0.5rem',
+                fontSize: '0.78rem',
+                gap: '0.4rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              title="Cadastrar com Google"
+            >
+              <GoogleIcon size={16} />
+              <span>Google</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleSocialLogin('X')}
+              className="btn-secondary"
+              style={{
+                padding: '0.6rem 0.5rem',
+                fontSize: '0.78rem',
+                gap: '0.4rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              title="Cadastrar com X"
+            >
+              <XIcon size={14} color="#f8fafc" />
+              <span>X</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleSocialLogin('Facebook')}
+              className="btn-secondary"
+              style={{
+                padding: '0.6rem 0.5rem',
+                fontSize: '0.78rem',
+                gap: '0.4rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              title="Cadastrar com Facebook"
+            >
+              <FacebookIcon size={15} />
+              <span>Facebook</span>
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.08)' }} />
+            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'lowercase' }}>
+              {t.auth.orContinueWith}
+            </span>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.08)' }} />
+          </div>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             <div>
@@ -142,7 +234,7 @@ export default function Register() {
               type="submit"
               disabled={loading}
               className="btn-primary"
-              style={{ width: '100%', padding: '0.7rem', marginTop: '0.5rem' }}
+              style={{ width: '100%', padding: '0.7rem', marginTop: '0.25rem' }}
             >
               {loading ? <Spinner size="sm" color="#090a0f" /> : t.auth.registerButton}
             </button>
