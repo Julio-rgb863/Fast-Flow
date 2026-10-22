@@ -57,6 +57,22 @@ export class UserController {
     }
   }
 
+  async refreshToken(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.userId as string;
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+      const newToken = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+      return res.json({
+        token: newToken,
+        user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      });
+    } catch (error) {
+      return res.status(500).json({ message: 'Erro ao renovar token' });
+    }
+  }
+
   async getProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.userId as string;

@@ -1,0 +1,18 @@
+{
+  "name": "FastFlow - Ingressos Oficiais",
+  "short_name": "FastFlow",
+  "description": "Plataforma oficial de compra e validação de ingressos para shows e festivais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080b",
+  "theme_color": "#07080b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

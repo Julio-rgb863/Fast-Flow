@@ -6,6 +6,8 @@ import Logo from '../components/Logo';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import SkeletonCard from '../components/SkeletonCard';
 import ScrollReveal from '../components/ScrollReveal';
+import UpdateBanner from '../components/UpdateBanner';
+import MobileAppModal from '../components/MobileAppModal';
 import {
   CalendarIcon,
   MapPinIcon,
@@ -62,6 +64,9 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#07080b', color: '#f8fafc' }}>
+      {/* Banner de Aviso de Nova Atualização */}
+      <UpdateBanner />
+
       {/* Top Ambient Glow (Subtle Linear/Vercel style, no neon blobs) */}
       <div className="bg-radial-subtle" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '620px', pointerEvents: 'none' }} />
       <div className="bg-grid-pattern" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '620px', opacity: 0.35, pointerEvents: 'none' }} />
@@ -91,6 +96,9 @@ export default function Home() {
 
           {/* Desktop Nav Actions */}
           <div className="desktop-menu" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            {/* Botão Baixar App Mobile */}
+            <MobileAppModal />
+
             <LanguageSwitcher />
 
             {isAuthenticated ? (
@@ -144,6 +152,7 @@ export default function Home() {
 
           {/* Mobile Hamburguer */}
           <div style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }} className="mobile-menu-btn">
+            <MobileAppModal />
             <LanguageSwitcher />
             <button
               onClick={() => setMenuOpen(!menuOpen)}
